@@ -32,4 +32,9 @@ class Session extends Model
     {
         return $this->hasMany('App\Models\Assignment');
     }
+
+    public function quizzes()
+    {
+        return $this->hasMany('App\Models\Quiz');
+    }
 }

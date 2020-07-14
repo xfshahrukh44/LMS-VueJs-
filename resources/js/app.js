@@ -16,6 +16,10 @@ import Chartkick from 'vue-chartkick';
 import Chart from 'chart.js';
 import VueNumber from 'vue-number-animation';
 
+Vue.component('quiz',require('./components/Quiz.vue').default)
+Vue.component('question',require('./components/Question.vue').default)
+Vue.component('opt',require('./components/Option.vue').default)
+
 window.Swal = Swal;
 const Toast = Swal.mixin({
   toast: true,

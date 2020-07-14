@@ -27,4 +27,9 @@ class Student extends Model
     {
         return $this->hasMany('App\Models\Submission');
     }
+
+    public function quiz_submissions()
+    {
+        return $this->hasMany('App\Models\QuizSubmission');
+    }
 }

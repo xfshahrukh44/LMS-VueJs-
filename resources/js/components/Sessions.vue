@@ -138,8 +138,12 @@
                 <ul id="assignments">
                 </ul>
 
-                <a href="#" @click="AddAssignmentModal()" class="btn btn-primary btn-block"><b>Create Assignment</b></a>
+                <b>Quizzes</b>
+                <ul id="quizzes">
+                </ul>
 
+                <a href="#" @click="AddAssignmentModal()" class="btn btn-primary btn-block mb-1"><b>Create Assignment</b></a>
+                <quiz class="btn btn-primary btn-block"></quiz>
               <!-- /.card-body -->
               </div>
             </div>
@@ -269,8 +273,14 @@
             $('#sessionModalDetail #title').text(session.section.classroom.title + session.section.title + ' - ' + session.course.title);
 
             //children
+            $('#sessionModalDetail #assignments li').remove();
             for(var i = 0; i < session.assignments.length; i++ ){
             $('#sessionModalDetail #assignments').append('<li>'+session.assignments[i].title+'</li>');
+            }
+            
+            $('#sessionModalDetail #quizzes li').remove();
+            for(var i = 0; i < session.quizzes.length; i++ ){
+            $('#sessionModalDetail #quizzes').append('<li>'+session.quizzes[i].title+'</li>');
             }
 
             this.current_session_id = session.id;

@@ -28,7 +28,10 @@ Route::apiResources(['teacher'=>'API\TeacherController']);
 Route::apiResources(['session'=>'API\SessionController']);
 Route::apiResources(['attendance'=>'API\AttendanceController']);
 Route::apiResources(['assignment'=>'API\AssignmentController']);
-
+Route::apiResources(['quiz'=>'API\QuizController']);
+Route::apiResources(['quizsubmission'=>'API\QuizSubmissionController']);
+Route::apiResources(['question'=>'API\QuestionController']);
+Route::apiResources(['option'=>'API\OptionController']);
 
 Route::get('finduser','API\UserController@search');
 Route::get('findprogram','API\ProgramController@search');
