@@ -67,15 +67,15 @@
             createQuiz()
             {
                 this.quiz_form.session_id = this.$parent.current_session_id;
-                this.$Progress.start();
+                // this.$Progress.start();
                 this.quiz_form.post('api/quiz')
                 .then(({data})=>{
                 // Fire.$emit('RefreshTable');
                 $('#quizModal').modal('hide');
-                Toast.fire({
-                    icon: 'success',
-                    title: 'Quiz Created Successfully'
-                });
+                // Toast.fire({
+                //     icon: 'success',
+                //     title: 'Quiz Created Successfully'
+                // });
                 this.$Progress.finish();
                 this.current_quiz_id =  data;
 

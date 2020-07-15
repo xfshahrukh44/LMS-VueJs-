@@ -3470,6 +3470,59 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -3479,6 +3532,24 @@ __webpack_require__.r(__webpack_exports__);
         id: '',
         quiz_id: '',
         content: ''
+      }),
+      option_a_form: new Form({
+        question_id: '',
+        content: '',
+        is_correct: '',
+        is_selected: ''
+      }),
+      option_b_form: new Form({
+        question_id: '',
+        content: '',
+        is_correct: '',
+        is_selected: ''
+      }),
+      option_c_form: new Form({
+        question_id: '',
+        content: '',
+        is_correct: '',
+        is_selected: ''
       })
     };
   },
@@ -3487,16 +3558,17 @@ __webpack_require__.r(__webpack_exports__);
       var _this = this;
 
       $('#questionModal').modal('hide');
-      this.question_form.quiz_id = this.$parent.current_quiz_id;
-      this.$Progress.start(); // this.$children.option_form.post('api/option');
+      this.question_form.quiz_id = this.$parent.current_quiz_id; // this.$children.option_form.post('api/option');
 
       this.question_form.post('api/question').then(function (_ref) {
         var data = _ref.data;
-        Toast.fire({
-          icon: 'success',
-          title: 'Question Created Successfully'
-        });
         _this.current_question_id = data;
+
+        _this.createOption(_this.option_a_form);
+
+        _this.createOption(_this.option_b_form);
+
+        _this.createOption(_this.option_c_form);
 
         if (_this.count < _this.$parent.quiz_form.number_of_questions - 1) {
           _this.count++;
@@ -3504,10 +3576,25 @@ __webpack_require__.r(__webpack_exports__);
 
           _this.question_form.reset();
         } else {
+          Toast.fire({
+            icon: 'success',
+            title: 'Quiz Created Successfully'
+          });
+
+          _this.$Progress.start();
+
           $('#questionModal').modal('hide');
           $('#sessionModalDetail').modal('hide');
+
+          _this.$Progress.finish();
         }
       })["catch"](function () {});
+    },
+    createOption: function createOption(form) {
+      console.log('creating option');
+      form.question_id = this.current_question_id;
+      form.post('api/option');
+      form.reset();
     }
   },
   mounted: function mounted() {
@@ -3591,16 +3678,15 @@ __webpack_require__.r(__webpack_exports__);
     createQuiz: function createQuiz() {
       var _this = this;
 
-      this.quiz_form.session_id = this.$parent.current_session_id;
-      this.$Progress.start();
+      this.quiz_form.session_id = this.$parent.current_session_id; // this.$Progress.start();
+
       this.quiz_form.post('api/quiz').then(function (_ref) {
         var data = _ref.data;
         // Fire.$emit('RefreshTable');
-        $('#quizModal').modal('hide');
-        Toast.fire({
-          icon: 'success',
-          title: 'Quiz Created Successfully'
-        });
+        $('#quizModal').modal('hide'); // Toast.fire({
+        //     icon: 'success',
+        //     title: 'Quiz Created Successfully'
+        // });
 
         _this.$Progress.finish();
 
@@ -98412,116 +98498,602 @@ var render = function() {
                 }
               },
               [
-                _c(
-                  "div",
-                  { staticClass: "modal-body" },
-                  [
-                    _c(
-                      "div",
-                      { staticClass: "form-group" },
-                      [
-                        _c("input", {
-                          directives: [
-                            {
-                              name: "model",
-                              rawName: "v-model",
-                              value: _vm.question_form.question_id,
-                              expression: "question_form.question_id"
+                _c("div", { staticClass: "modal-body" }, [
+                  _c(
+                    "div",
+                    { staticClass: "form-group" },
+                    [
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.question_form.question_id,
+                            expression: "question_form.question_id"
+                          }
+                        ],
+                        staticClass: "form-control",
+                        class: {
+                          "is-invalid": _vm.question_form.errors.has(
+                            "question_id"
+                          )
+                        },
+                        attrs: {
+                          id: "question_id",
+                          type: "text",
+                          name: "question_id",
+                          placeholder: "Enter Name",
+                          readonly: "",
+                          hidden: ""
+                        },
+                        domProps: { value: _vm.question_form.question_id },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
                             }
-                          ],
-                          staticClass: "form-control",
-                          class: {
-                            "is-invalid": _vm.question_form.errors.has(
-                              "question_id"
+                            _vm.$set(
+                              _vm.question_form,
+                              "question_id",
+                              $event.target.value
                             )
-                          },
-                          attrs: {
-                            id: "question_id",
-                            type: "text",
-                            name: "question_id",
-                            placeholder: "Enter Name",
-                            readonly: "",
-                            hidden: ""
-                          },
-                          domProps: { value: _vm.question_form.question_id },
-                          on: {
-                            input: function($event) {
-                              if ($event.target.composing) {
-                                return
-                              }
-                              _vm.$set(
-                                _vm.question_form,
-                                "question_id",
-                                $event.target.value
-                              )
-                            }
                           }
-                        }),
-                        _vm._v(" "),
-                        _c("has-error", {
-                          attrs: {
-                            form: _vm.question_form,
-                            field: "question_id"
+                        }
+                      }),
+                      _vm._v(" "),
+                      _c("has-error", {
+                        attrs: { form: _vm.question_form, field: "question_id" }
+                      })
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    { staticClass: "form-group" },
+                    [
+                      _c("textarea", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.question_form.content,
+                            expression: "question_form.content"
                           }
-                        })
-                      ],
-                      1
-                    ),
-                    _vm._v(" "),
-                    _c(
-                      "div",
-                      { staticClass: "form-group" },
-                      [
-                        _c("textarea", {
-                          directives: [
-                            {
-                              name: "model",
-                              rawName: "v-model",
-                              value: _vm.question_form.content,
-                              expression: "question_form.content"
+                        ],
+                        staticClass: "form-control",
+                        class: {
+                          "is-invalid": _vm.question_form.errors.has("content")
+                        },
+                        attrs: {
+                          id: "content",
+                          type: "textarea",
+                          name: "content",
+                          placeholder: "Question"
+                        },
+                        domProps: { value: _vm.question_form.content },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
                             }
-                          ],
-                          staticClass: "form-control",
-                          class: {
-                            "is-invalid": _vm.question_form.errors.has(
-                              "content"
+                            _vm.$set(
+                              _vm.question_form,
+                              "content",
+                              $event.target.value
                             )
-                          },
-                          attrs: {
-                            id: "content",
-                            type: "textarea",
-                            name: "content",
-                            placeholder: "Question"
-                          },
-                          domProps: { value: _vm.question_form.content },
-                          on: {
-                            input: function($event) {
-                              if ($event.target.composing) {
-                                return
+                          }
+                        }
+                      }),
+                      _vm._v(" "),
+                      _c("has-error", {
+                        attrs: { form: _vm.question_form, field: "content" }
+                      })
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    { staticClass: "form-group" },
+                    [
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.option_a_form.content,
+                            expression: "option_a_form.content"
+                          }
+                        ],
+                        staticClass: "form-control",
+                        class: {
+                          "is-invalid": _vm.option_a_form.errors.has("content")
+                        },
+                        attrs: { id: "content", type: "text", name: "content" },
+                        domProps: { value: _vm.option_a_form.content },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.$set(
+                              _vm.option_a_form,
+                              "content",
+                              $event.target.value
+                            )
+                          }
+                        }
+                      }),
+                      _vm._v(" "),
+                      _c("has-error", {
+                        attrs: { form: _vm.option_a_form, field: "content" }
+                      })
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    { staticStyle: { "text-align": "left" } },
+                    [
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.option_a_form.is_correct,
+                            expression: "option_a_form.is_correct"
+                          }
+                        ],
+                        class: {
+                          "is-invalid": _vm.option_a_form.errors.has(
+                            "is_correct"
+                          )
+                        },
+                        attrs: {
+                          id: "is_correct",
+                          type: "checkbox",
+                          name: "is_correct"
+                        },
+                        domProps: {
+                          checked: Array.isArray(_vm.option_a_form.is_correct)
+                            ? _vm._i(_vm.option_a_form.is_correct, null) > -1
+                            : _vm.option_a_form.is_correct
+                        },
+                        on: {
+                          change: function($event) {
+                            var $$a = _vm.option_a_form.is_correct,
+                              $$el = $event.target,
+                              $$c = $$el.checked ? true : false
+                            if (Array.isArray($$a)) {
+                              var $$v = null,
+                                $$i = _vm._i($$a, $$v)
+                              if ($$el.checked) {
+                                $$i < 0 &&
+                                  _vm.$set(
+                                    _vm.option_a_form,
+                                    "is_correct",
+                                    $$a.concat([$$v])
+                                  )
+                              } else {
+                                $$i > -1 &&
+                                  _vm.$set(
+                                    _vm.option_a_form,
+                                    "is_correct",
+                                    $$a.slice(0, $$i).concat($$a.slice($$i + 1))
+                                  )
                               }
-                              _vm.$set(
-                                _vm.question_form,
-                                "content",
-                                $event.target.value
-                              )
+                            } else {
+                              _vm.$set(_vm.option_a_form, "is_correct", $$c)
                             }
                           }
-                        }),
-                        _vm._v(" "),
-                        _c("has-error", {
-                          attrs: { form: _vm.question_form, field: "content" }
-                        })
-                      ],
-                      1
-                    ),
-                    _vm._v(" "),
-                    _c("opt", {
-                      staticClass: "black",
-                      attrs: { id: "option1" }
-                    })
-                  ],
-                  1
-                ),
+                        }
+                      }),
+                      _vm._v(" "),
+                      _c("label", [_vm._v("Is Correct?")]),
+                      _vm._v(" "),
+                      _c("has-error", {
+                        attrs: { form: _vm.option_a_form, field: "is_correct" }
+                      }),
+                      _vm._v(" "),
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.option_a_form.is_selected,
+                            expression: "option_a_form.is_selected"
+                          }
+                        ],
+                        class: {
+                          "is-invalid": _vm.option_a_form.errors.has(
+                            "is_selected"
+                          )
+                        },
+                        attrs: {
+                          id: "is_selected",
+                          type: "checkbox",
+                          name: "is_selected"
+                        },
+                        domProps: {
+                          checked: Array.isArray(_vm.option_a_form.is_selected)
+                            ? _vm._i(_vm.option_a_form.is_selected, null) > -1
+                            : _vm.option_a_form.is_selected
+                        },
+                        on: {
+                          change: function($event) {
+                            var $$a = _vm.option_a_form.is_selected,
+                              $$el = $event.target,
+                              $$c = $$el.checked ? true : false
+                            if (Array.isArray($$a)) {
+                              var $$v = null,
+                                $$i = _vm._i($$a, $$v)
+                              if ($$el.checked) {
+                                $$i < 0 &&
+                                  _vm.$set(
+                                    _vm.option_a_form,
+                                    "is_selected",
+                                    $$a.concat([$$v])
+                                  )
+                              } else {
+                                $$i > -1 &&
+                                  _vm.$set(
+                                    _vm.option_a_form,
+                                    "is_selected",
+                                    $$a.slice(0, $$i).concat($$a.slice($$i + 1))
+                                  )
+                              }
+                            } else {
+                              _vm.$set(_vm.option_a_form, "is_selected", $$c)
+                            }
+                          }
+                        }
+                      }),
+                      _vm._v(" "),
+                      _c("label", [_vm._v("Is Selected")]),
+                      _vm._v(" "),
+                      _c("has-error", {
+                        attrs: { form: _vm.option_a_form, field: "is_selected" }
+                      })
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    { staticClass: "form-group" },
+                    [
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.option_b_form.content,
+                            expression: "option_b_form.content"
+                          }
+                        ],
+                        staticClass: "form-control",
+                        class: {
+                          "is-invalid": _vm.option_b_form.errors.has("content")
+                        },
+                        attrs: { id: "content", type: "text", name: "content" },
+                        domProps: { value: _vm.option_b_form.content },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.$set(
+                              _vm.option_b_form,
+                              "content",
+                              $event.target.value
+                            )
+                          }
+                        }
+                      }),
+                      _vm._v(" "),
+                      _c("has-error", {
+                        attrs: { form: _vm.option_b_form, field: "content" }
+                      })
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    { staticStyle: { "text-align": "left" } },
+                    [
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.option_b_form.is_correct,
+                            expression: "option_b_form.is_correct"
+                          }
+                        ],
+                        class: {
+                          "is-invalid": _vm.option_b_form.errors.has(
+                            "is_correct"
+                          )
+                        },
+                        attrs: {
+                          id: "is_correct",
+                          type: "checkbox",
+                          name: "is_correct"
+                        },
+                        domProps: {
+                          checked: Array.isArray(_vm.option_b_form.is_correct)
+                            ? _vm._i(_vm.option_b_form.is_correct, null) > -1
+                            : _vm.option_b_form.is_correct
+                        },
+                        on: {
+                          change: function($event) {
+                            var $$a = _vm.option_b_form.is_correct,
+                              $$el = $event.target,
+                              $$c = $$el.checked ? true : false
+                            if (Array.isArray($$a)) {
+                              var $$v = null,
+                                $$i = _vm._i($$a, $$v)
+                              if ($$el.checked) {
+                                $$i < 0 &&
+                                  _vm.$set(
+                                    _vm.option_b_form,
+                                    "is_correct",
+                                    $$a.concat([$$v])
+                                  )
+                              } else {
+                                $$i > -1 &&
+                                  _vm.$set(
+                                    _vm.option_b_form,
+                                    "is_correct",
+                                    $$a.slice(0, $$i).concat($$a.slice($$i + 1))
+                                  )
+                              }
+                            } else {
+                              _vm.$set(_vm.option_b_form, "is_correct", $$c)
+                            }
+                          }
+                        }
+                      }),
+                      _vm._v(" "),
+                      _c("label", [_vm._v("Is Correct?")]),
+                      _vm._v(" "),
+                      _c("has-error", {
+                        attrs: { form: _vm.option_b_form, field: "is_correct" }
+                      }),
+                      _vm._v(" "),
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.option_b_form.is_selected,
+                            expression: "option_b_form.is_selected"
+                          }
+                        ],
+                        class: {
+                          "is-invalid": _vm.option_b_form.errors.has(
+                            "is_selected"
+                          )
+                        },
+                        attrs: {
+                          id: "is_selected",
+                          type: "checkbox",
+                          name: "is_selected"
+                        },
+                        domProps: {
+                          checked: Array.isArray(_vm.option_b_form.is_selected)
+                            ? _vm._i(_vm.option_b_form.is_selected, null) > -1
+                            : _vm.option_b_form.is_selected
+                        },
+                        on: {
+                          change: function($event) {
+                            var $$a = _vm.option_b_form.is_selected,
+                              $$el = $event.target,
+                              $$c = $$el.checked ? true : false
+                            if (Array.isArray($$a)) {
+                              var $$v = null,
+                                $$i = _vm._i($$a, $$v)
+                              if ($$el.checked) {
+                                $$i < 0 &&
+                                  _vm.$set(
+                                    _vm.option_b_form,
+                                    "is_selected",
+                                    $$a.concat([$$v])
+                                  )
+                              } else {
+                                $$i > -1 &&
+                                  _vm.$set(
+                                    _vm.option_b_form,
+                                    "is_selected",
+                                    $$a.slice(0, $$i).concat($$a.slice($$i + 1))
+                                  )
+                              }
+                            } else {
+                              _vm.$set(_vm.option_b_form, "is_selected", $$c)
+                            }
+                          }
+                        }
+                      }),
+                      _vm._v(" "),
+                      _c("label", [_vm._v("Is Selected")]),
+                      _vm._v(" "),
+                      _c("has-error", {
+                        attrs: { form: _vm.option_b_form, field: "is_selected" }
+                      })
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    { staticClass: "form-group" },
+                    [
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.option_c_form.content,
+                            expression: "option_c_form.content"
+                          }
+                        ],
+                        staticClass: "form-control",
+                        class: {
+                          "is-invalid": _vm.option_c_form.errors.has("content")
+                        },
+                        attrs: { id: "content", type: "text", name: "content" },
+                        domProps: { value: _vm.option_c_form.content },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.$set(
+                              _vm.option_c_form,
+                              "content",
+                              $event.target.value
+                            )
+                          }
+                        }
+                      }),
+                      _vm._v(" "),
+                      _c("has-error", {
+                        attrs: { form: _vm.option_c_form, field: "content" }
+                      })
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    { staticStyle: { "text-align": "left" } },
+                    [
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.option_c_form.is_correct,
+                            expression: "option_c_form.is_correct"
+                          }
+                        ],
+                        class: {
+                          "is-invalid": _vm.option_c_form.errors.has(
+                            "is_correct"
+                          )
+                        },
+                        attrs: {
+                          id: "is_correct",
+                          type: "checkbox",
+                          name: "is_correct"
+                        },
+                        domProps: {
+                          checked: Array.isArray(_vm.option_c_form.is_correct)
+                            ? _vm._i(_vm.option_c_form.is_correct, null) > -1
+                            : _vm.option_c_form.is_correct
+                        },
+                        on: {
+                          change: function($event) {
+                            var $$a = _vm.option_c_form.is_correct,
+                              $$el = $event.target,
+                              $$c = $$el.checked ? true : false
+                            if (Array.isArray($$a)) {
+                              var $$v = null,
+                                $$i = _vm._i($$a, $$v)
+                              if ($$el.checked) {
+                                $$i < 0 &&
+                                  _vm.$set(
+                                    _vm.option_c_form,
+                                    "is_correct",
+                                    $$a.concat([$$v])
+                                  )
+                              } else {
+                                $$i > -1 &&
+                                  _vm.$set(
+                                    _vm.option_c_form,
+                                    "is_correct",
+                                    $$a.slice(0, $$i).concat($$a.slice($$i + 1))
+                                  )
+                              }
+                            } else {
+                              _vm.$set(_vm.option_c_form, "is_correct", $$c)
+                            }
+                          }
+                        }
+                      }),
+                      _vm._v(" "),
+                      _c("label", [_vm._v("Is Correct?")]),
+                      _vm._v(" "),
+                      _c("has-error", {
+                        attrs: { form: _vm.option_c_form, field: "is_correct" }
+                      }),
+                      _vm._v(" "),
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.option_c_form.is_selected,
+                            expression: "option_c_form.is_selected"
+                          }
+                        ],
+                        class: {
+                          "is-invalid": _vm.option_c_form.errors.has(
+                            "is_selected"
+                          )
+                        },
+                        attrs: {
+                          id: "is_selected",
+                          type: "checkbox",
+                          name: "is_selected"
+                        },
+                        domProps: {
+                          checked: Array.isArray(_vm.option_c_form.is_selected)
+                            ? _vm._i(_vm.option_c_form.is_selected, null) > -1
+                            : _vm.option_c_form.is_selected
+                        },
+                        on: {
+                          change: function($event) {
+                            var $$a = _vm.option_c_form.is_selected,
+                              $$el = $event.target,
+                              $$c = $$el.checked ? true : false
+                            if (Array.isArray($$a)) {
+                              var $$v = null,
+                                $$i = _vm._i($$a, $$v)
+                              if ($$el.checked) {
+                                $$i < 0 &&
+                                  _vm.$set(
+                                    _vm.option_c_form,
+                                    "is_selected",
+                                    $$a.concat([$$v])
+                                  )
+                              } else {
+                                $$i > -1 &&
+                                  _vm.$set(
+                                    _vm.option_c_form,
+                                    "is_selected",
+                                    $$a.slice(0, $$i).concat($$a.slice($$i + 1))
+                                  )
+                              }
+                            } else {
+                              _vm.$set(_vm.option_c_form, "is_selected", $$c)
+                            }
+                          }
+                        }
+                      }),
+                      _vm._v(" "),
+                      _c("label", [_vm._v("Is Selected")]),
+                      _vm._v(" "),
+                      _c("has-error", {
+                        attrs: { form: _vm.option_c_form, field: "is_selected" }
+                      })
+                    ],
+                    1
+                  )
+                ]),
                 _vm._v(" "),
                 _vm._m(1)
               ]
@@ -119098,15 +119670,14 @@ __webpack_require__.r(__webpack_exports__);
 /*!********************************************!*\
   !*** ./resources/js/components/Option.vue ***!
   \********************************************/
-/*! no static exports found */
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Option_vue_vue_type_template_id_674217c0___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Option.vue?vue&type=template&id=674217c0& */ "./resources/js/components/Option.vue?vue&type=template&id=674217c0&");
 /* harmony import */ var _Option_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Option.vue?vue&type=script&lang=js& */ "./resources/js/components/Option.vue?vue&type=script&lang=js&");
-/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _Option_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _Option_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__[key]; }) }(__WEBPACK_IMPORT_KEY__));
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
 
@@ -119136,7 +119707,7 @@ component.options.__file = "resources/js/components/Option.vue"
 /*!*********************************************************************!*\
   !*** ./resources/js/components/Option.vue?vue&type=script&lang=js& ***!
   \*********************************************************************/
-/*! no static exports found */
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

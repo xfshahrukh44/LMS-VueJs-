@@ -21,7 +21,60 @@
                     class="form-control" :class="{ 'is-invalid': question_form.errors.has('content') }"></textarea>
                   <has-error :form="question_form" field="content"></has-error>
                 </div>
-                  <opt id="option1" class="black"></opt>
+
+                <!-- OPTION WORK -->
+                <!-- a -->
+                <div class="form-group">
+                  <input v-model="option_a_form.content" id="content" type="text" name="content"
+                    class="form-control" :class="{ 'is-invalid': option_a_form.errors.has('content') }">
+                  <has-error :form="option_a_form" field="content"></has-error>
+                </div>
+                <div style="text-align: left;">              
+                  <input v-model="option_a_form.is_correct" id="is_correct" type="checkbox" name="is_correct" 
+                    :class="{ 'is-invalid': option_a_form.errors.has('is_correct') }">
+                  <label>Is Correct?</label>
+                  <has-error :form="option_a_form" field="is_correct"></has-error>
+
+                  <input v-model="option_a_form.is_selected" id="is_selected" type="checkbox" name="is_selected" 
+                    :class="{ 'is-invalid': option_a_form.errors.has('is_selected') }">
+                  <label>Is Selected</label>
+                  <has-error :form="option_a_form" field="is_selected"></has-error>
+                </div>
+                <!-- b -->
+                <div class="form-group">
+                  <input v-model="option_b_form.content" id="content" type="text" name="content"
+                    class="form-control" :class="{ 'is-invalid': option_b_form.errors.has('content') }">
+                  <has-error :form="option_b_form" field="content"></has-error>
+                </div>
+                <div style="text-align: left;">              
+                  <input v-model="option_b_form.is_correct" id="is_correct" type="checkbox" name="is_correct" 
+                    :class="{ 'is-invalid': option_b_form.errors.has('is_correct') }">
+                  <label>Is Correct?</label>
+                  <has-error :form="option_b_form" field="is_correct"></has-error>
+
+                  <input v-model="option_b_form.is_selected" id="is_selected" type="checkbox" name="is_selected" 
+                    :class="{ 'is-invalid': option_b_form.errors.has('is_selected') }">
+                  <label>Is Selected</label>
+                  <has-error :form="option_b_form" field="is_selected"></has-error>
+                </div>
+                <!-- c -->
+                <div class="form-group">
+                  <input v-model="option_c_form.content" id="content" type="text" name="content"
+                    class="form-control" :class="{ 'is-invalid': option_c_form.errors.has('content') }">
+                  <has-error :form="option_c_form" field="content"></has-error>
+                </div>
+                <div style="text-align: left;">              
+                  <input v-model="option_c_form.is_correct" id="is_correct" type="checkbox" name="is_correct" 
+                    :class="{ 'is-invalid': option_c_form.errors.has('is_correct') }">
+                  <label>Is Correct?</label>
+                  <has-error :form="option_c_form" field="is_correct"></has-error>
+
+                  <input v-model="option_c_form.is_selected" id="is_selected" type="checkbox" name="is_selected" 
+                    :class="{ 'is-invalid': option_c_form.errors.has('is_selected') }">
+                  <label>Is Selected</label>
+                  <has-error :form="option_c_form" field="is_selected"></has-error>
+                </div>
+                
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -47,7 +100,31 @@
                         quiz_id: '',
                         content: '',
                     }
-                )
+                ),
+                option_a_form: new Form(
+                  {
+                    question_id: '',
+                    content: '',
+                    is_correct: '',
+                    is_selected: '',
+                  }
+                ),
+                option_b_form: new Form(
+                  {
+                    question_id: '',
+                    content: '',
+                    is_correct: '',
+                    is_selected: '',
+                  }
+                ),
+                option_c_form: new Form(
+                  {
+                    question_id: '',
+                    content: '',
+                    is_correct: '',
+                    is_selected: '',
+                  }
+                ),
             }
         },
         methods:
@@ -56,15 +133,13 @@
             {
                 $('#questionModal').modal('hide');
                 this.question_form.quiz_id = this.$parent.current_quiz_id;
-                this.$Progress.start();
                 // this.$children.option_form.post('api/option');
                 this.question_form.post('api/question')
                 .then(({data})=>{
-                  Toast.fire({
-                      icon: 'success',
-                      title: 'Question Created Successfully'
-                  });
                   this.current_question_id = data;
+                  this.createOption(this.option_a_form);
+                  this.createOption(this.option_b_form);
+                  this.createOption(this.option_c_form);
                   
                   if(this.count < (this.$parent.quiz_form.number_of_questions)-1){
                       this.count++;
@@ -72,12 +147,25 @@
                       this.question_form.reset();
                   }
                   else{
+                    Toast.fire({
+                        icon: 'success',
+                        title: 'Quiz Created Successfully'
+                    });
+                    this.$Progress.start();
                     $('#questionModal').modal('hide');
                     $('#sessionModalDetail').modal('hide');
+                    this.$Progress.finish();
                   }              
                 })
                 .catch(()=>{});
             },
+            createOption(form)
+            {
+              console.log('creating option');
+              form.question_id = this.current_question_id;
+              form.post('api/option');
+              form.reset();
+            }
         },
         mounted() {
             console.log('Component mounted.')

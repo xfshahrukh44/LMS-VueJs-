@@ -28,6 +28,8 @@ class OptionController extends Controller
      */
     public function store(Request $request)
     {
+        // dd($request->is_correct, $request->is_selected);
+        // exit();
         $this->validate($request,[ 
             'question_id' => 'required|integer',
             'content' => 'required'

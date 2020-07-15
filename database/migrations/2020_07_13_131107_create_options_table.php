@@ -17,8 +17,8 @@ class CreateOptionsTable extends Migration
             $table->id();
             $table->integer('question_id');
             $table->string('content');
-            $table->boolean('is_correct')->default(0);
-            $table->boolean('is_selected')->default(0);
+            $table->boolean('is_correct')->default(false)->nullable();
+            $table->boolean('is_selected')->default(false)->nullable();
             $table->timestamps();
             $table->softDeletes()->nullable();
         });
