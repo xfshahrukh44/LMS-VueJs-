@@ -32,12 +32,12 @@
                 <div style="text-align: left;">              
                   <input v-model="option_a_form.is_correct" id="is_correct" type="checkbox" name="is_correct" 
                     :class="{ 'is-invalid': option_a_form.errors.has('is_correct') }">
-                  <label>Is Correct?</label>
+                  <label class="black">Is Correct?</label>
                   <has-error :form="option_a_form" field="is_correct"></has-error>
 
                   <input v-model="option_a_form.is_selected" id="is_selected" type="checkbox" name="is_selected" 
                     :class="{ 'is-invalid': option_a_form.errors.has('is_selected') }">
-                  <label>Is Selected</label>
+                  <label class="black">Is Selected</label>
                   <has-error :form="option_a_form" field="is_selected"></has-error>
                 </div>
                 <!-- b -->
@@ -49,12 +49,12 @@
                 <div style="text-align: left;">              
                   <input v-model="option_b_form.is_correct" id="is_correct" type="checkbox" name="is_correct" 
                     :class="{ 'is-invalid': option_b_form.errors.has('is_correct') }">
-                  <label>Is Correct?</label>
+                  <label class="black">Is Correct?</label>
                   <has-error :form="option_b_form" field="is_correct"></has-error>
 
                   <input v-model="option_b_form.is_selected" id="is_selected" type="checkbox" name="is_selected" 
                     :class="{ 'is-invalid': option_b_form.errors.has('is_selected') }">
-                  <label>Is Selected</label>
+                  <label class="black">Is Selected</label>
                   <has-error :form="option_b_form" field="is_selected"></has-error>
                 </div>
                 <!-- c -->
@@ -66,12 +66,12 @@
                 <div style="text-align: left;">              
                   <input v-model="option_c_form.is_correct" id="is_correct" type="checkbox" name="is_correct" 
                     :class="{ 'is-invalid': option_c_form.errors.has('is_correct') }">
-                  <label>Is Correct?</label>
+                  <label class="black">Is Correct?</label>
                   <has-error :form="option_c_form" field="is_correct"></has-error>
 
                   <input v-model="option_c_form.is_selected" id="is_selected" type="checkbox" name="is_selected" 
                     :class="{ 'is-invalid': option_c_form.errors.has('is_selected') }">
-                  <label>Is Selected</label>
+                  <label class="black">Is Selected</label>
                   <has-error :form="option_c_form" field="is_selected"></has-error>
                 </div>
                 

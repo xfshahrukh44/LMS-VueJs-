@@ -19,6 +19,7 @@ import VueNumber from 'vue-number-animation';
 Vue.component('quiz',require('./components/Quiz.vue').default)
 Vue.component('question',require('./components/Question.vue').default)
 Vue.component('opt',require('./components/Option.vue').default)
+Vue.component('assign',require('./components/Assignments.vue').default)
 
 window.Swal = Swal;
 const Toast = Swal.mixin({

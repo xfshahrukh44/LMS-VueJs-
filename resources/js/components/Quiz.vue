@@ -84,6 +84,10 @@
                 })
                 .catch(()=>{});
             },
+            loadQuiz()
+            {
+
+            },
         },
         mounted() {
             console.log('Mounted!')

@@ -136,10 +136,17 @@
                 <!-- //children -->
                 <b>Assignments</b>
                 <ul id="assignments">
+                  <li v-for="assignment in session_assignments">
+                    <a href="#" @click="openAssignment(assignment)">{{assignment.title}}</a>
+                  </li>
                 </ul>
+                <assign></assign>
 
                 <b>Quizzes</b>
                 <ul id="quizzes">
+                   <li v-for="quizes in session_quizes">
+                    <a>{{quizes.title}}</a>
+                  </li>
                 </ul>
 
                 <a href="#" @click="AddAssignmentModal()" class="btn btn-primary btn-block mb-1"><b>Create Assignment</b></a>
@@ -212,7 +219,11 @@
             courses:{},
             teachers:{},
             sessions:{},
+            assign_name: '',
+            assign_type: '',
             current_session_id:'',
+            session_assignments:{},
+            session_quizes:{},
             assignment_form : new Form(
               {
                 id: '',
@@ -271,20 +282,34 @@
           DetailSessionModal(session)
           {
             $('#sessionModalDetail #title').text(session.section.classroom.title + session.section.title + ' - ' + session.course.title);
+            this.session_assignments = session.assignments;
+            this.session_quizes = session.quizes;
 
             //children
-            $('#sessionModalDetail #assignments li').remove();
-            for(var i = 0; i < session.assignments.length; i++ ){
-            $('#sessionModalDetail #assignments').append('<li>'+session.assignments[i].title+'</li>');
-            }
+            // $('#sessionModalDetail #assignments li').remove();
             
-            $('#sessionModalDetail #quizzes li').remove();
-            for(var i = 0; i < session.quizzes.length; i++ ){
-            $('#sessionModalDetail #quizzes').append('<li>'+session.quizzes[i].title+'</li>');
-            }
+            // for(var i = 0; i < session.assignments.length; i++ ){
+            // $('#sessionModalDetail #assignments').append('<li>'+session.assignments[i].title+'</li>');
+            // }
+            
+            // $('#sessionModalDetail #quizzes li').remove();
+            // for(var i = 0; i < session.quizzes.length; i++ ){
+            // $('#sessionModalDetail #quizzes').append('<li>'+session.quizzes[i].title+'</li>');
+            // }
 
             this.current_session_id = session.id;
             $('#sessionModalDetail').modal('show');
+          },
+          openAssignment(assignment){
+            this.assign_name = assignment.file;
+            this.assign_type = assignment.type;
+            this.asgn_id = assignment.id;
+
+            $('#assignmentModalDetail #title').text(assignment.title);
+            $('#assignmentModalDetail #description').text(assignment.description);
+            $('#assignmentModalDetail #marks').text(assignment.marks);
+
+            $('#assignmentModalDetail').modal('show');
           },
           deleteSession(id){
             Swal.fire({

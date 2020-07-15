@@ -33,6 +33,9 @@ Route::apiResources(['quizsubmission'=>'API\QuizSubmissionController']);
 Route::apiResources(['question'=>'API\QuestionController']);
 Route::apiResources(['option'=>'API\OptionController']);
 
+//Assignment Download
+Route::get('dloadasgn', 'API\AssignmentController@download');
+
 Route::get('finduser','API\UserController@search');
 Route::get('findprogram','API\ProgramController@search');
 Route::get('findschool','API\SchoolController@search');

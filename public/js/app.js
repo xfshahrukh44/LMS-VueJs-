@@ -1941,7 +1941,51 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
+  methods: {
+    downloadFile: function downloadFile() {
+      var _this = this;
+
+      var id = this.$parent.asgn_id;
+      axios.get('api/dloadasgn?asgn_id=' + id, {
+        responseType: 'arraybuffer'
+      }).then(function (_ref) {
+        var data = _ref.data;
+        var blob = new Blob([data], {
+          type: _this.$parent.assign_type
+        });
+        var link = document.createElement('a');
+        link.href = window.URL.createObjectURL(blob);
+        link.download = _this.$parent.assign_name.substr(8);
+        link.click();
+      });
+    }
+  },
   mounted: function mounted() {
     console.log('Component mounted.');
   }
@@ -3693,7 +3737,8 @@ __webpack_require__.r(__webpack_exports__);
         _this.current_quiz_id = data;
         $('#questionModal').modal('show');
       })["catch"](function () {});
-    }
+    },
+    loadQuiz: function loadQuiz() {}
   },
   mounted: function mounted() {
     console.log('Mounted!');
@@ -4475,6 +4520,13 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -4484,7 +4536,11 @@ __webpack_require__.r(__webpack_exports__);
       courses: {},
       teachers: {},
       sessions: {},
+      assign_name: '',
+      assign_type: '',
       current_session_id: '',
+      session_assignments: {},
+      session_quizes: {},
       assignment_form: new Form({
         id: '',
         session_id: '',
@@ -4545,22 +4601,29 @@ __webpack_require__.r(__webpack_exports__);
       $('#sessionModal').modal('show');
     },
     DetailSessionModal: function DetailSessionModal(session) {
-      $('#sessionModalDetail #title').text(session.section.classroom.title + session.section.title + ' - ' + session.course.title); //children
-
-      $('#sessionModalDetail #assignments li').remove();
-
-      for (var i = 0; i < session.assignments.length; i++) {
-        $('#sessionModalDetail #assignments').append('<li>' + session.assignments[i].title + '</li>');
-      }
-
-      $('#sessionModalDetail #quizzes li').remove();
-
-      for (var i = 0; i < session.quizzes.length; i++) {
-        $('#sessionModalDetail #quizzes').append('<li>' + session.quizzes[i].title + '</li>');
-      }
+      $('#sessionModalDetail #title').text(session.section.classroom.title + session.section.title + ' - ' + session.course.title);
+      this.session_assignments = session.assignments;
+      this.session_quizes = session.quizes; //children
+      // $('#sessionModalDetail #assignments li').remove();
+      // for(var i = 0; i < session.assignments.length; i++ ){
+      // $('#sessionModalDetail #assignments').append('<li>'+session.assignments[i].title+'</li>');
+      // }
+      // $('#sessionModalDetail #quizzes li').remove();
+      // for(var i = 0; i < session.quizzes.length; i++ ){
+      // $('#sessionModalDetail #quizzes').append('<li>'+session.quizzes[i].title+'</li>');
+      // }
 
       this.current_session_id = session.id;
       $('#sessionModalDetail').modal('show');
+    },
+    openAssignment: function openAssignment(assignment) {
+      this.assign_name = assignment.file;
+      this.assign_type = assignment.type;
+      this.asgn_id = assignment.id;
+      $('#assignmentModalDetail #title').text(assignment.title);
+      $('#assignmentModalDetail #description').text(assignment.description);
+      $('#assignmentModalDetail #marks').text(assignment.marks);
+      $('#assignmentModalDetail').modal('show');
     },
     deleteSession: function deleteSession(id) {
       var _this3 = this;
@@ -95922,29 +95985,127 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm._m(0)
+  return _c("div", { staticClass: "container" }, [
+    _c(
+      "div",
+      {
+        staticClass: "modal fade",
+        attrs: {
+          id: "assignmentModalDetail",
+          tabindex: "-1",
+          role: "dialog",
+          "aria-labelledby": "assignmentModalDetailLabel",
+          "aria-hidden": "true"
+        }
+      },
+      [
+        _c("div", { staticClass: "modal-dialog modal-dialog-centered" }, [
+          _c("div", { staticClass: "modal-content" }, [
+            _vm._m(0),
+            _vm._v(" "),
+            _c("div", { staticClass: "modal-body" }, [
+              _c("h3", {
+                staticClass: "profile-username text-center",
+                attrs: { id: "title" }
+              }),
+              _vm._v(" "),
+              _c(
+                "ul",
+                { staticClass: "list-group list-group-unbordered mb-3" },
+                [
+                  _vm._m(1),
+                  _vm._v(" "),
+                  _vm._m(2),
+                  _vm._v(" "),
+                  _c("li", { staticClass: "list-group-item" }, [
+                    _c("b", [_vm._v("Download File")]),
+                    _vm._v(" "),
+                    _c(
+                      "span",
+                      {
+                        staticClass: "material-icons float-right",
+                        on: { click: _vm.downloadFile }
+                      },
+                      [
+                        _vm._v(
+                          "\n                    get_app\n                "
+                        )
+                      ]
+                    )
+                  ])
+                ]
+              )
+            ]),
+            _vm._v(" "),
+            _vm._m(3)
+          ])
+        ])
+      ]
+    )
+  ])
 }
 var staticRenderFns = [
   function() {
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "container" }, [
-      _c("div", { staticClass: "row justify-content-center" }, [
-        _c("div", { staticClass: "col-md-8" }, [
-          _c("div", { staticClass: "card" }, [
-            _c("div", { staticClass: "card-header" }, [
-              _vm._v("Example Component")
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "card-body" }, [
-              _vm._v(
-                "\n                    I'm an example component.\n                "
-              )
-            ])
-          ])
-        ])
-      ])
+    return _c("div", { staticClass: "modal-header" }, [
+      _c(
+        "h5",
+        {
+          staticClass: "modal-title",
+          attrs: { id: "assignmentModalDetailLabel" }
+        },
+        [_vm._v("Assignment Detail")]
+      ),
+      _vm._v(" "),
+      _c(
+        "button",
+        {
+          staticClass: "close",
+          attrs: {
+            type: "button",
+            "data-dismiss": "modal",
+            "aria-label": "Close"
+          }
+        },
+        [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
+      )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("li", { staticClass: "list-group-item" }, [
+      _c("b", [_vm._v("Description")]),
+      _vm._v(" "),
+      _c("a", { staticClass: "float-right", attrs: { id: "description" } })
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("li", { staticClass: "list-group-item" }, [
+      _c("b", [_vm._v("Marks")]),
+      _vm._v(" "),
+      _c("a", { staticClass: "float-right", attrs: { id: "marks" } })
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "modal-footer" }, [
+      _c(
+        "button",
+        {
+          staticClass: "btn btn-secondary",
+          attrs: { type: "button", "data-dismiss": "modal" }
+        },
+        [_vm._v("Close")]
+      )
     ])
   }
 ]
@@ -98691,7 +98852,9 @@ var render = function() {
                         }
                       }),
                       _vm._v(" "),
-                      _c("label", [_vm._v("Is Correct?")]),
+                      _c("label", { staticClass: "black" }, [
+                        _vm._v("Is Correct?")
+                      ]),
                       _vm._v(" "),
                       _c("has-error", {
                         attrs: { form: _vm.option_a_form, field: "is_correct" }
@@ -98751,7 +98914,9 @@ var render = function() {
                         }
                       }),
                       _vm._v(" "),
-                      _c("label", [_vm._v("Is Selected")]),
+                      _c("label", { staticClass: "black" }, [
+                        _vm._v("Is Selected")
+                      ]),
                       _vm._v(" "),
                       _c("has-error", {
                         attrs: { form: _vm.option_a_form, field: "is_selected" }
@@ -98858,7 +99023,9 @@ var render = function() {
                         }
                       }),
                       _vm._v(" "),
-                      _c("label", [_vm._v("Is Correct?")]),
+                      _c("label", { staticClass: "black" }, [
+                        _vm._v("Is Correct?")
+                      ]),
                       _vm._v(" "),
                       _c("has-error", {
                         attrs: { form: _vm.option_b_form, field: "is_correct" }
@@ -98918,7 +99085,9 @@ var render = function() {
                         }
                       }),
                       _vm._v(" "),
-                      _c("label", [_vm._v("Is Selected")]),
+                      _c("label", { staticClass: "black" }, [
+                        _vm._v("Is Selected")
+                      ]),
                       _vm._v(" "),
                       _c("has-error", {
                         attrs: { form: _vm.option_b_form, field: "is_selected" }
@@ -99025,7 +99194,9 @@ var render = function() {
                         }
                       }),
                       _vm._v(" "),
-                      _c("label", [_vm._v("Is Correct?")]),
+                      _c("label", { staticClass: "black" }, [
+                        _vm._v("Is Correct?")
+                      ]),
                       _vm._v(" "),
                       _c("has-error", {
                         attrs: { form: _vm.option_c_form, field: "is_correct" }
@@ -99085,7 +99256,9 @@ var render = function() {
                         }
                       }),
                       _vm._v(" "),
-                      _c("label", [_vm._v("Is Selected")]),
+                      _c("label", { staticClass: "black" }, [
+                        _vm._v("Is Selected")
+                      ]),
                       _vm._v(" "),
                       _c("has-error", {
                         attrs: { form: _vm.option_c_form, field: "is_selected" }
@@ -101184,11 +101357,40 @@ var render = function() {
                 _vm._v(" "),
                 _c("b", [_vm._v("Assignments")]),
                 _vm._v(" "),
-                _c("ul", { attrs: { id: "assignments" } }),
+                _c(
+                  "ul",
+                  { attrs: { id: "assignments" } },
+                  _vm._l(_vm.session_assignments, function(assignment) {
+                    return _c("li", [
+                      _c(
+                        "a",
+                        {
+                          attrs: { href: "#" },
+                          on: {
+                            click: function($event) {
+                              return _vm.openAssignment(assignment)
+                            }
+                          }
+                        },
+                        [_vm._v(_vm._s(assignment.title))]
+                      )
+                    ])
+                  }),
+                  0
+                ),
+                _vm._v(" "),
+                _c("assign"),
                 _vm._v(" "),
                 _c("b", [_vm._v("Quizzes")]),
                 _vm._v(" "),
-                _c("ul", { attrs: { id: "quizzes" } }),
+                _c(
+                  "ul",
+                  { attrs: { id: "quizzes" } },
+                  _vm._l(_vm.session_quizes, function(quizes) {
+                    return _c("li", [_c("a", [_vm._v(_vm._s(quizes.title))])])
+                  }),
+                  0
+                ),
                 _vm._v(" "),
                 _c(
                   "a",
@@ -119003,6 +119205,7 @@ window.Vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.
 Vue.component('quiz', __webpack_require__(/*! ./components/Quiz.vue */ "./resources/js/components/Quiz.vue")["default"]);
 Vue.component('question', __webpack_require__(/*! ./components/Question.vue */ "./resources/js/components/Question.vue")["default"]);
 Vue.component('opt', __webpack_require__(/*! ./components/Option.vue */ "./resources/js/components/Option.vue")["default"]);
+Vue.component('assign', __webpack_require__(/*! ./components/Assignments.vue */ "./resources/js/components/Assignments.vue")["default"]);
 window.Swal = sweetalert2__WEBPACK_IMPORTED_MODULE_2___default.a;
 var Toast = sweetalert2__WEBPACK_IMPORTED_MODULE_2___default.a.mixin({
   toast: true,

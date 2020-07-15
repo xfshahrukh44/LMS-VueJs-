@@ -104,15 +104,18 @@ class AssignmentController extends Controller
             // dd(auth()->user()->name);
             // exit();
             $file_data = explode(',',$request->file);
+            $file_MIME_TYPE = explode(';',substr($file_data[0],5));
             $file_base = explode('/',$file_data[0]);
             $file_type = explode(';',$file_base[1]);
             $file_name = explode('.',$request->file_name);
+
             Storage::disk('public')->put(Carbon::today().' - '.auth('api')->user()->name.' - '.$session->course->title.' - '.$file_name[0].'.'.$file_type[0],base64_decode($file_data[1]));
             DB::table('assignments')->insert([
                 'session_id' => $request->session_id,
                 'title' => $request->title,
                 'description' => $request->description,
                 'marks' => $request->marks,
+                'type' => $file_MIME_TYPE[0],
                 'file' => '/storage/'.Carbon::today().' - '.auth('api')->user()->name.' - '.$session->course->title.' - '.$file_name[0].'.'.$file_type[0],
             ]);
         }
@@ -242,13 +245,16 @@ class AssignmentController extends Controller
     {
         if($this->authorize('isAdmin'))
         {
-            $assignment = Assignment::find($request['assignment_id']);
+            $assignment = Assignment::find($request['asgn_id']);
             $file_contents = $assignment->file;
-            return Storage::download($assignment->file);
+            $file = public_path().$assignment->file;
+            $headers = ['Content-Type' => $assignment->type];
+            return response()->download($file,'',$headers);
+            // return Storage::download("public/a.jpg");
         }
         if($this->authorize('isTeacher'))
         {
-            $assignment = Assignment::find($request->assignment_id);
+            $assignment = Assignment::find($request['asgn_id']);
             $teacher = Teacher::where('user_id', auth('api')->user()->id)->get();
             if($assignment->session->teacher_id == $teacher[0]->id)
             {
@@ -270,7 +276,7 @@ class AssignmentController extends Controller
         
         if($this->authorize('isStudent'))
         {
-            $assignment = Assignment::find($id);
+            $assignment = Assignment::find($request['asgn_id']);
             $student = Student::where('user_id', auth('api')->user()->id)->get();
             if($assignment->session->section_id == $student[0]->section_id)
             {

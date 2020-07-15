@@ -31,13 +31,6 @@ $fa-font-path: "../webfonts";
 .box{
 	display: table;
 }
-
-// .info-box-text
-// {
-// 	font-size: 14px;
-// }
-
-// .info-box-number
-// {
-// 	font-size: 10px !important;
-// }
+#assignmentModalDetail li span{
+	cursor: pointer;
+}

@@ -9,7 +9,7 @@ class Assignment extends Model
 {
     use SoftDeletes;
     
-    protected $fillable = ['session_id', 'title', 'description', 'marks', 'file'];
+    protected $fillable = ['session_id', 'title', 'description', 'marks', 'type' ,'file'];
 	
     protected $dates = ['created_at', 'updated_at', 'deleted_at'];
 

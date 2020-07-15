@@ -19,6 +19,7 @@ class CreateAssignmentsTable extends Migration
             $table->string('title');
             $table->text('description');
             $table->integer('marks');
+            $table->string('type')->nullable();
             $table->string('file')->nullable;
             $table->timestamps();
             $table->softDeletes()->nullable();
