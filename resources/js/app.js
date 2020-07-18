@@ -15,7 +15,9 @@ import Swal from 'sweetalert2';
 import Chartkick from 'vue-chartkick';
 import Chart from 'chart.js';
 import VueNumber from 'vue-number-animation';
+import Gate from "./Gate";
 
+Vue.prototype.$gate = new Gate(window.user);
 Vue.component('quiz',require('./components/Quiz.vue').default)
 Vue.component('question',require('./components/Question.vue').default)
 Vue.component('opt',require('./components/Option.vue').default)

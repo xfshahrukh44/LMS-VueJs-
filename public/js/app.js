@@ -3705,10 +3705,11 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
-      current_quiz_id: '',
+      current_quiz: {},
       quiz_form: new Form({
         id: '',
         session_id: '',
@@ -3737,11 +3738,10 @@ __webpack_require__.r(__webpack_exports__);
         _this.current_quiz_id = data;
         $('#questionModal').modal('show');
       })["catch"](function () {});
-    },
-    loadQuiz: function loadQuiz() {}
+    }
   },
   mounted: function mounted() {
-    console.log('Mounted!');
+    console.log('quiz mounted');
   }
 });
 
@@ -4527,6 +4527,79 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -4540,7 +4613,8 @@ __webpack_require__.r(__webpack_exports__);
       assign_type: '',
       current_session_id: '',
       session_assignments: {},
-      session_quizes: {},
+      session_quizzes: {},
+      current_quiz: {},
       assignment_form: new Form({
         id: '',
         session_id: '',
@@ -4603,7 +4677,7 @@ __webpack_require__.r(__webpack_exports__);
     DetailSessionModal: function DetailSessionModal(session) {
       $('#sessionModalDetail #title').text(session.section.classroom.title + session.section.title + ' - ' + session.course.title);
       this.session_assignments = session.assignments;
-      this.session_quizes = session.quizes; //children
+      this.session_quizzes = session.quizzes; //children
       // $('#sessionModalDetail #assignments li').remove();
       // for(var i = 0; i < session.assignments.length; i++ ){
       // $('#sessionModalDetail #assignments').append('<li>'+session.assignments[i].title+'</li>');
@@ -4612,6 +4686,21 @@ __webpack_require__.r(__webpack_exports__);
       // for(var i = 0; i < session.quizzes.length; i++ ){
       // $('#sessionModalDetail #quizzes').append('<li>'+session.quizzes[i].title+'</li>');
       // }
+
+      var count = 0;
+
+      for (var i = 0; i < this.session_quizzes.length; i++) {
+        axios.get('api/checkquizsubmission?quiz_id=' + session.quizzes[i].id).then(function (_ref) {
+          var data = _ref.data;
+          console.log(count);
+
+          if (data == 0) {
+            $('#quiz' + session.quizzes[count++].id).hide();
+          } else {
+            $('#quiz' + session.quizzes[count++].id).show();
+          }
+        });
+      }
 
       this.current_session_id = session.id;
       $('#sessionModalDetail').modal('show');
@@ -4624,6 +4713,53 @@ __webpack_require__.r(__webpack_exports__);
       $('#assignmentModalDetail #description').text(assignment.description);
       $('#assignmentModalDetail #marks').text(assignment.marks);
       $('#assignmentModalDetail').modal('show');
+    },
+    openQuiz: function openQuiz(quiz) {
+      this.current_quiz = quiz;
+      $('#quizModalDetail').modal('show');
+    },
+    submitQuiz: function submitQuiz(quiz) {
+      this.current_quiz = quiz;
+      axios.get('api/checkquizsubmission?quiz_id=' + quiz.id).then(function (_ref2) {
+        var data = _ref2.data;
+
+        if (data == 0) {
+          $('#submitQuizModalDetail').modal('hide');
+          Toast.fire({
+            icon: 'warning',
+            title: 'Quiz already submitted.'
+          });
+        } else {
+          $('#submitQuizModalDetail').modal('show');
+        }
+      });
+    },
+    markQuiz: function markQuiz(current_quiz) {
+      var total_marks = current_quiz.marks;
+      var question_marks = current_quiz.marks / current_quiz.number_of_questions;
+      var marks_obtained = 0;
+
+      for (var i = 0; i < current_quiz.questions.length; i++) {
+        for (var j = 0; j < current_quiz.questions[i].options.length; j++) {
+          var radio_id = '#' + current_quiz.questions[i].options[j].id;
+          var option = current_quiz.questions[i].options[j]; // console.log(radio_id);
+
+          if ($(radio_id).is(':checked') && option.is_correct == 1) {
+            marks_obtained += question_marks;
+          }
+        }
+      }
+
+      axios.post('api/quizsubmission?marks_obtained=' + marks_obtained + '&quiz_id=' + current_quiz.id).then(function (_ref3) {
+        var data = _ref3.data;
+        $('#submitQuizModalDetail').modal('hide');
+        Toast.fire({
+          icon: 'success',
+          title: 'Submitted successfully.'
+        });
+      });
+      $('#sessionModalDetail').modal('hide');
+      console.log(marks_obtained);
     },
     deleteSession: function deleteSession(id) {
       var _this3 = this;
@@ -4648,32 +4784,32 @@ __webpack_require__.r(__webpack_exports__);
     loadSection: function loadSection() {
       var _this4 = this;
 
-      axios.get('api/get_session_section').then(function (_ref) {
-        var data = _ref.data;
+      axios.get('api/get_session_section').then(function (_ref4) {
+        var data = _ref4.data;
         return _this4.sections = data;
       });
     },
     loadCourse: function loadCourse() {
       var _this5 = this;
 
-      axios.get('api/get_session_course').then(function (_ref2) {
-        var data = _ref2.data;
+      axios.get('api/get_session_course').then(function (_ref5) {
+        var data = _ref5.data;
         return _this5.courses = data;
       });
     },
     loadTeacher: function loadTeacher() {
       var _this6 = this;
 
-      axios.get('api/get_session_teacher').then(function (_ref3) {
-        var data = _ref3.data;
+      axios.get('api/get_session_teacher').then(function (_ref6) {
+        var data = _ref6.data;
         return _this6.teachers = data;
       });
     },
     loadSession: function loadSession() {
       var _this7 = this;
 
-      axios.get('api/session').then(function (_ref4) {
-        var data = _ref4.data;
+      axios.get('api/session').then(function (_ref7) {
+        var data = _ref7.data;
         return _this7.sessions = data;
       });
     },
@@ -4736,8 +4872,8 @@ __webpack_require__.r(__webpack_exports__);
     this.loadTeacher();
     Fire.$on('searching', function () {
       var query = _this11.search;
-      axios.get('api/findsession?q=' + query).then(function (_ref5) {
-        var data = _ref5.data;
+      axios.get('api/findsession?q=' + query).then(function (_ref8) {
+        var data = _ref8.data;
         return _this11.sessions = data;
       });
     });
@@ -101386,27 +101522,58 @@ var render = function() {
                 _c(
                   "ul",
                   { attrs: { id: "quizzes" } },
-                  _vm._l(_vm.session_quizes, function(quizes) {
-                    return _c("li", [_c("a", [_vm._v(_vm._s(quizes.title))])])
+                  _vm._l(_vm.session_quizzes, function(quiz) {
+                    return _c("li", [
+                      _c(
+                        "a",
+                        {
+                          attrs: { href: "#" },
+                          on: {
+                            click: function($event) {
+                              return _vm.openQuiz(quiz)
+                            }
+                          }
+                        },
+                        [_vm._v(_vm._s(quiz.title))]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "a",
+                        {
+                          staticClass: "float-right red",
+                          attrs: { href: "#", id: "quiz" + quiz.id },
+                          on: {
+                            click: function($event) {
+                              return _vm.submitQuiz(quiz)
+                            }
+                          }
+                        },
+                        [_vm._v("Start Quiz")]
+                      )
+                    ])
                   }),
                   0
                 ),
                 _vm._v(" "),
-                _c(
-                  "a",
-                  {
-                    staticClass: "btn btn-primary btn-block mb-1",
-                    attrs: { href: "#" },
-                    on: {
-                      click: function($event) {
-                        return _vm.AddAssignmentModal()
-                      }
-                    }
-                  },
-                  [_c("b", [_vm._v("Create Assignment")])]
-                ),
+                _vm.$gate.isAdmin()
+                  ? _c(
+                      "a",
+                      {
+                        staticClass: "btn btn-primary btn-block mb-1",
+                        attrs: { href: "#" },
+                        on: {
+                          click: function($event) {
+                            return _vm.AddAssignmentModal()
+                          }
+                        }
+                      },
+                      [_c("b", [_vm._v("Create Assignment")])]
+                    )
+                  : _vm._e(),
                 _vm._v(" "),
-                _c("quiz", { staticClass: "btn btn-primary btn-block" })
+                _vm.$gate.isAdmin()
+                  ? _c("quiz", { staticClass: "btn btn-primary btn-block" })
+                  : _vm._e()
               ],
               1
             )
@@ -101750,6 +101917,141 @@ var render = function() {
           ])
         ])
       ]
+    ),
+    _vm._v(" "),
+    _c(
+      "div",
+      {
+        staticClass: "modal fade",
+        attrs: {
+          id: "quizModalDetail",
+          tabindex: "-1",
+          role: "dialog",
+          "aria-labelledby": "quizModalDetailLabel",
+          "aria-hidden": "true"
+        }
+      },
+      [
+        _c("div", { staticClass: "modal-dialog modal-dialog-centered" }, [
+          _c("div", { staticClass: "modal-content" }, [
+            _vm._m(5),
+            _vm._v(" "),
+            _c("div", { staticClass: "modal-body" }, [
+              _c("h3", { staticClass: "profile-username text-center black" }, [
+                _vm._v(_vm._s(_vm.current_quiz.title))
+              ]),
+              _vm._v(" "),
+              _c(
+                "ul",
+                { staticClass: "list-group list-group-unbordered mb-3" },
+                _vm._l(_vm.current_quiz.questions, function(question) {
+                  return _c("li", [
+                    _vm._v(
+                      "\n                " +
+                        _vm._s(question.content) +
+                        "\n                "
+                    ),
+                    _c(
+                      "ul",
+                      _vm._l(question.options, function(option) {
+                        return _c("li", [
+                          _vm._v(
+                            "\n                    " +
+                              _vm._s(option.content) +
+                              "\n                    "
+                          )
+                        ])
+                      }),
+                      0
+                    )
+                  ])
+                }),
+                0
+              )
+            ]),
+            _vm._v(" "),
+            _vm._m(6)
+          ])
+        ])
+      ]
+    ),
+    _vm._v(" "),
+    _c(
+      "div",
+      {
+        staticClass: "modal fade",
+        attrs: {
+          id: "submitQuizModalDetail",
+          tabindex: "-1",
+          role: "dialog",
+          "aria-labelledby": "submitQuizModalDetailLabel",
+          "aria-hidden": "true"
+        }
+      },
+      [
+        _c("div", { staticClass: "modal-dialog modal-dialog-centered" }, [
+          _c("div", { staticClass: "modal-content" }, [
+            _vm._m(7),
+            _vm._v(" "),
+            _c("div", { staticClass: "modal-body" }, [
+              _c("h3", { staticClass: "profile-username text-center black" }, [
+                _vm._v(_vm._s(_vm.current_quiz.title))
+              ]),
+              _vm._v(" "),
+              _c(
+                "ol",
+                { staticClass: "list-group list-group-unbordered mb-3" },
+                _vm._l(_vm.current_quiz.questions, function(question) {
+                  return _c("li", [
+                    _vm._v(
+                      "\n                " +
+                        _vm._s(question.content) +
+                        "\n                "
+                    ),
+                    _c(
+                      "ol",
+                      { attrs: { type: "A" } },
+                      _vm._l(question.options, function(option) {
+                        return _c("li", { attrs: { action: "" } }, [
+                          _c("input", {
+                            attrs: {
+                              type: "radio",
+                              id: option.id,
+                              name: question.id
+                            }
+                          }),
+                          _vm._v(
+                            "\n                    " +
+                              _vm._s(option.content) +
+                              "\n                    "
+                          )
+                        ])
+                      }),
+                      0
+                    )
+                  ])
+                }),
+                0
+              ),
+              _vm._v(" "),
+              _c(
+                "a",
+                {
+                  staticClass: "btn btn-primary float-right col-md-3",
+                  on: {
+                    click: function($event) {
+                      return _vm.markQuiz(_vm.current_quiz)
+                    }
+                  }
+                },
+                [_vm._v("Submit")]
+              )
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "modal-footer" })
+          ])
+        ])
+      ]
     )
   ])
 }
@@ -101841,6 +102143,77 @@ var staticRenderFns = [
       },
       [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
     )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "modal-header" }, [
+      _c(
+        "h5",
+        {
+          staticClass: "modal-title black",
+          attrs: { id: "quizModalDetailLabel" }
+        },
+        [_vm._v("Quiz")]
+      ),
+      _vm._v(" "),
+      _c(
+        "button",
+        {
+          staticClass: "close",
+          attrs: {
+            type: "button",
+            "data-dismiss": "modal",
+            "aria-label": "Close"
+          }
+        },
+        [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
+      )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "modal-footer" }, [
+      _c(
+        "button",
+        {
+          staticClass: "btn btn-secondary",
+          attrs: { type: "button", "data-dismiss": "modal" }
+        },
+        [_vm._v("Close")]
+      )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "modal-header" }, [
+      _c(
+        "h5",
+        {
+          staticClass: "modal-title black",
+          attrs: { id: "submitQuizModalDetailLabel" }
+        },
+        [_vm._v("Quiz")]
+      ),
+      _vm._v(" "),
+      _c(
+        "button",
+        {
+          staticClass: "close",
+          attrs: {
+            type: "button",
+            "data-dismiss": "modal",
+            "aria-label": "Close"
+          }
+        },
+        [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
+      )
+    ])
   }
 ]
 render._withStripped = true
@@ -119165,6 +119538,58 @@ module.exports = function(module) {
 
 /***/ }),
 
+/***/ "./resources/js/Gate.js":
+/*!******************************!*\
+  !*** ./resources/js/Gate.js ***!
+  \******************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Gate; });
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var Gate = /*#__PURE__*/function () {
+  function Gate(user) {
+    _classCallCheck(this, Gate);
+
+    this.user = user;
+  }
+
+  _createClass(Gate, [{
+    key: "isAdmin",
+    value: function isAdmin() {
+      return this.user.type === 'admin';
+    }
+  }, {
+    key: "isUser",
+    value: function isUser() {
+      return this.user.type === 'user';
+    }
+  }, {
+    key: "isTeacher",
+    value: function isTeacher() {
+      return this.user.type === 'teacher';
+    }
+  }, {
+    key: "isStudent",
+    value: function isStudent() {
+      return this.user.type === 'student';
+    }
+  }]);
+
+  return Gate;
+}();
+
+
+
+/***/ }),
+
 /***/ "./resources/js/app.js":
 /*!*****************************!*\
   !*** ./resources/js/app.js ***!
@@ -119184,9 +119609,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var chart_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! chart.js */ "./node_modules/chart.js/dist/Chart.js");
 /* harmony import */ var chart_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(chart_js__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var vue_number_animation__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vue-number-animation */ "./node_modules/vue-number-animation/index.js");
-/* harmony import */ var vue_router__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! vue-router */ "./node_modules/vue-router/dist/vue-router.esm.js");
-/* harmony import */ var vue_progressbar__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! vue-progressbar */ "./node_modules/vue-progressbar/dist/vue-progressbar.js");
-/* harmony import */ var vue_progressbar__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(vue_progressbar__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var _Gate__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./Gate */ "./resources/js/Gate.js");
+/* harmony import */ var vue_router__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! vue-router */ "./node_modules/vue-router/dist/vue-router.esm.js");
+/* harmony import */ var vue_progressbar__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! vue-progressbar */ "./node_modules/vue-progressbar/dist/vue-progressbar.js");
+/* harmony import */ var vue_progressbar__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(vue_progressbar__WEBPACK_IMPORTED_MODULE_8__);
 /**
  * First we will load all of this project's JavaScript dependencies which
  * includes Vue and other libraries. It is a great starting point when
@@ -119202,6 +119628,8 @@ window.Vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.
 
 
 
+
+Vue.prototype.$gate = new _Gate__WEBPACK_IMPORTED_MODULE_6__["default"](window.user);
 Vue.component('quiz', __webpack_require__(/*! ./components/Quiz.vue */ "./resources/js/components/Quiz.vue")["default"]);
 Vue.component('question', __webpack_require__(/*! ./components/Question.vue */ "./resources/js/components/Question.vue")["default"]);
 Vue.component('opt', __webpack_require__(/*! ./components/Option.vue */ "./resources/js/components/Option.vue")["default"]);
@@ -119235,7 +119663,7 @@ Vue.component(vform__WEBPACK_IMPORTED_MODULE_1__["AlertError"].name, vform__WEBP
 var Fire = new Vue();
 window.Fire = Fire;
 
-Vue.use(vue_router__WEBPACK_IMPORTED_MODULE_6__["default"]);
+Vue.use(vue_router__WEBPACK_IMPORTED_MODULE_7__["default"]);
 
 var options = {
   color: '#bffaf3',
@@ -119247,7 +119675,7 @@ var options = {
     termination: 300
   }
 };
-Vue.use(vue_progressbar__WEBPACK_IMPORTED_MODULE_7___default.a, options);
+Vue.use(vue_progressbar__WEBPACK_IMPORTED_MODULE_8___default.a, options);
 var routes = [{
   path: '/home',
   component: __webpack_require__(/*! ./components/Dashboard.vue */ "./resources/js/components/Dashboard.vue")["default"]
@@ -119294,7 +119722,7 @@ var routes = [{
   path: '/submissions',
   component: __webpack_require__(/*! ./components/Submissions.vue */ "./resources/js/components/Submissions.vue")["default"]
 }];
-var router = new vue_router__WEBPACK_IMPORTED_MODULE_6__["default"]({
+var router = new vue_router__WEBPACK_IMPORTED_MODULE_7__["default"]({
   mode: 'history',
   routes: routes // short for `routes: routes`
 

@@ -42,6 +42,7 @@
             </div>
           </div>
         </div>
+        <!-- QUESTION -->
         <question></question>
     </div>
 </template>
@@ -50,7 +51,7 @@
     export default {
         data(){
             return{
-                current_quiz_id: '',
+                current_quiz: {},
                 quiz_form: new Form(
                     {
                         id: '',
@@ -84,13 +85,9 @@
                 })
                 .catch(()=>{});
             },
-            loadQuiz()
-            {
-
-            },
         },
         mounted() {
-            console.log('Mounted!')
+            console.log('quiz mounted')
         }
     };
 </script>

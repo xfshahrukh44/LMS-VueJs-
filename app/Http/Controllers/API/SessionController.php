@@ -24,7 +24,7 @@ class SessionController extends Controller
 
      public function index()
     {
-        return $session = Session::with('section.classroom','course.classroom','teacher', 'assignments', 'quizzes.questions.options', 'quizzes.quiz_submissions.students')->paginate(5);
+        return $session = Session::with('section.classroom','course.classroom','teacher', 'assignments', 'quizzes.questions.options', 'quizzes.quiz_submissions.student')->paginate(5);
     }
 
     /**

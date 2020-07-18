@@ -3,6 +3,7 @@
         <div class="row mt-3 ml-1">
             <h2>Sessions Details</h2>
         </div>
+        <!-- INDEX VIEW -->
         <div class="row">
           <div class="col-12">
             <div class="card">
@@ -144,13 +145,14 @@
 
                 <b>Quizzes</b>
                 <ul id="quizzes">
-                   <li v-for="quizes in session_quizes">
-                    <a>{{quizes.title}}</a>
-                  </li>
+                  <li v-for="quiz in session_quizzes">
+                    <a href="#" @click="openQuiz(quiz)">{{quiz.title}}</a>
+                    <a class="float-right red" href="#" @click="submitQuiz(quiz)" :id="'quiz' + quiz.id">Start Quiz</a>
+                  </li>     
                 </ul>
 
-                <a href="#" @click="AddAssignmentModal()" class="btn btn-primary btn-block mb-1"><b>Create Assignment</b></a>
-                <quiz class="btn btn-primary btn-block"></quiz>
+                <a href="#" @click="AddAssignmentModal()" class="btn btn-primary btn-block mb-1" v-if="$gate.isAdmin()"><b>Create Assignment</b></a>
+                <quiz class="btn btn-primary btn-block" v-if="$gate.isAdmin()"></quiz>
               <!-- /.card-body -->
               </div>
             </div>
@@ -206,6 +208,77 @@
           </div>
         </div>
 
+        <!-- QUIZ DETAIL MODAL -->
+        <div class="modal fade" id="quizModalDetail" tabindex="-1" role="dialog" aria-labelledby="quizModalDetailLabel" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title black" id="quizModalDetailLabel">Quiz</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+
+                <h3 class="profile-username text-center black">{{current_quiz.title}}</h3>
+
+                <ul class="list-group list-group-unbordered mb-3">
+                  <li v-for="question in current_quiz.questions">
+                    {{question.content}}
+                    <ul>
+                      <li v-for="option in question.options">
+                        {{option.content}}
+                        <!-- CHECKBOX HERE -->
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+
+              <!-- /.card-body -->
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- QUIZ SUBMIT MODAL -->
+        <div class="modal fade" id="submitQuizModalDetail" tabindex="-1" role="dialog" aria-labelledby="submitQuizModalDetailLabel" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title black" id="submitQuizModalDetailLabel">Quiz</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+
+                <h3 class="profile-username text-center black">{{current_quiz.title}}</h3>
+
+                <ol class="list-group list-group-unbordered mb-3">
+                  <li v-for="question in current_quiz.questions">
+                    {{question.content}}
+                    <ol type="A">
+                      <li v-for="option in question.options" action="">
+                        <input type="radio" :id="option.id" :name="question.id">
+                        {{option.content}}
+                        <!-- CHECKBOX HERE -->
+                      </li>
+                    </ol>
+                  </li>
+                </ol>
+                <a class="btn btn-primary float-right col-md-3" @click="markQuiz(current_quiz)">Submit</a>
+
+              <!-- /.card-body -->
+              </div>
+              <div class="modal-footer">
+              </div>
+            </div>
+          </div>
+        </div>
+
     </div>
 </template>
 
@@ -223,7 +296,8 @@
             assign_type: '',
             current_session_id:'',
             session_assignments:{},
-            session_quizes:{},
+            session_quizzes:{},
+            current_quiz: {},
             assignment_form : new Form(
               {
                 id: '',
@@ -283,7 +357,7 @@
           {
             $('#sessionModalDetail #title').text(session.section.classroom.title + session.section.title + ' - ' + session.course.title);
             this.session_assignments = session.assignments;
-            this.session_quizes = session.quizes;
+            this.session_quizzes = session.quizzes;
 
             //children
             // $('#sessionModalDetail #assignments li').remove();
@@ -296,7 +370,23 @@
             // for(var i = 0; i < session.quizzes.length; i++ ){
             // $('#sessionModalDetail #quizzes').append('<li>'+session.quizzes[i].title+'</li>');
             // }
-
+            var count = 0;
+            for(var i = 0; i < this.session_quizzes.length; i++)
+            {
+              axios.get('api/checkquizsubmission?quiz_id=' +  session.quizzes[i].id)
+              .then(({data}) => 
+              {
+                console.log(count);
+                if(data == 0)
+                {
+                  $('#quiz' + session.quizzes[count++].id ).hide();
+                }
+                else
+                {
+                  $('#quiz' + session.quizzes[count++].id ).show();
+                }
+              })
+            }
             this.current_session_id = session.id;
             $('#sessionModalDetail').modal('show');
           },
@@ -310,6 +400,61 @@
             $('#assignmentModalDetail #marks').text(assignment.marks);
 
             $('#assignmentModalDetail').modal('show');
+          },
+          openQuiz(quiz)
+          {
+            this.current_quiz = quiz;
+            $('#quizModalDetail').modal('show');
+          },
+          submitQuiz(quiz)
+          {
+            this.current_quiz = quiz;
+            axios.get('api/checkquizsubmission?quiz_id=' + quiz.id)
+            .then(({data}) => {
+              if(data == 0)
+              {
+                $('#submitQuizModalDetail').modal('hide');
+                Toast.fire({
+                  icon: 'warning',
+                  title: 'Quiz already submitted.'
+                });        
+              }
+              else
+              {
+                $('#submitQuizModalDetail').modal('show');
+              }
+            })
+          },
+          markQuiz(current_quiz)
+          {
+            var total_marks = current_quiz.marks;
+            var question_marks = current_quiz.marks / current_quiz.number_of_questions;
+            var marks_obtained = 0;
+
+            for(var i = 0; i < current_quiz.questions.length; i++)
+            {
+              for(var j = 0; j < current_quiz.questions[i].options.length; j++)
+              {
+                var radio_id = '#' + current_quiz.questions[i].options[j].id;
+                var option = current_quiz.questions[i].options[j];
+                // console.log(radio_id);
+                if($(radio_id).is(':checked') && option.is_correct == 1)
+                {
+                  marks_obtained += question_marks;
+                }
+              }
+            }
+            axios.post('api/quizsubmission?marks_obtained=' + marks_obtained + '&quiz_id=' + current_quiz.id)
+            .then(({data}) => 
+            {
+              $('#submitQuizModalDetail').modal('hide');
+              Toast.fire({
+                icon: 'success',
+                title: 'Submitted successfully.'
+              });
+            })
+            $('#sessionModalDetail').modal('hide');
+            console.log(marks_obtained);
           },
           deleteSession(id){
             Swal.fire({

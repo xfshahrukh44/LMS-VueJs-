@@ -5,6 +5,8 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\QuizSubmission;
+use App\Models\Student;
+use DB;
 
 class QuizSubmissionController extends Controller
 {
@@ -29,12 +31,13 @@ class QuizSubmissionController extends Controller
      */
     public function store(Request $request)
     {
-        $this->validate($request,[ 
-            'quiz_id' => 'required|integer',
-            'student_id' => 'required|integer',
-            'marks' => 'required|integer',
+        $student = (Student::where('user_id', auth('api')->user()->id)->get())[0];
+        DB::table('quiz_submissions')->insert([
+            'quiz_id' => $request->quiz_id,
+            'student_id' => $student->id,
+            'marks' => $request->marks_obtained,
         ]);
-        return QuizSubmission::create($request->all());
+        return ['message' => 'Submitted!'];
     }
 
     /**
@@ -71,5 +74,19 @@ class QuizSubmissionController extends Controller
         QuizSubmission::find($id)->delete();
 
         return ['message'=>'Quiz Submission Deleted'];
+    }
+
+    public function check_quiz_submission(Request $request)
+    {
+        $student = (Student::where('user_id', auth('api')->user()->id)->get())[0];
+        $quiz_submission = QuizSubmission::where('student_id', $student->id)
+                                        ->where('quiz_id', $request->quiz_id)
+                                        ->where('deleted_at', NULL)
+                                        ->get();
+        if(count($quiz_submission) > 0)
+        {
+            return 0;
+        }
+        return 1;
     }
 }

@@ -35,6 +35,8 @@ Route::apiResources(['option'=>'API\OptionController']);
 
 //Assignment Download
 Route::get('dloadasgn', 'API\AssignmentController@download');
+//Quiz Submission check
+Route::get('checkquizsubmission', 'API\QuizSubmissionController@check_quiz_submission');
 
 Route::get('finduser','API\UserController@search');
 Route::get('findprogram','API\ProgramController@search');
@@ -67,6 +69,3 @@ Route::get('adminhome','API\AdminController@view_dashboard');
 Route::get('statusURL','API\AttendanceController@find_check_in_out_status');
 Route::get('checkInURL', 'API\AttendanceController@check_in');
 Route::get('checkOutURL', 'API\AttendanceController@check_out');
-
-
-

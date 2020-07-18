@@ -17,7 +17,7 @@ class CreateQuizSubmissionsTable extends Migration
             $table->id();
             $table->integer('quiz_id');
             $table->integer('student_id');
-            $table->integer('marks');
+            $table->float('marks');
             $table->timestamps();
             $table->softDeletes()->nullable();
         });
