@@ -18,11 +18,6 @@
           <label>Is Correct?</label>
           <has-error :form="option_form" field="is_correct"></has-error>
 
-          <input v-model="option_form.is_selected" id="is_selected" type="checkbox" name="is_selected" 
-            :class="{ 'is-invalid': option_form.errors.has('is_selected') }">
-          <label>Is Selected</label>
-          <has-error :form="option_form" field="is_selected"></has-error>
-
         </div>
       </form>
     </div>

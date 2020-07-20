@@ -33,6 +33,11 @@
                     class="form-control" :class="{ 'is-invalid': quiz_form.errors.has('number_of_questions') }">
                   <has-error :form="quiz_form" field="number_of_questions"></has-error>
                 </div> 
+                <div class="form-group">
+                  <input v-model="quiz_form.minutes" id="minutes" type="number" name="minutes" placeholder="Minutes"
+                    class="form-control" :class="{ 'is-invalid': quiz_form.errors.has('minutes') }">
+                  <has-error :form="quiz_form" field="minutes"></has-error>
+                </div> 
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -59,6 +64,7 @@
                         title: '',
                         marks: '',
                         number_of_questions: '',
+                        minutes: '',
                     }
                 )
             }

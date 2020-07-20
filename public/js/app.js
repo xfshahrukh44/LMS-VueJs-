@@ -3128,11 +3128,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -3554,19 +3549,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -3706,6 +3688,11 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -3715,7 +3702,8 @@ __webpack_require__.r(__webpack_exports__);
         session_id: '',
         title: '',
         marks: '',
-        number_of_questions: ''
+        number_of_questions: '',
+        minutes: ''
       })
     };
   },
@@ -4316,6 +4304,8 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 //
 //
 //
@@ -4600,39 +4590,71 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+// Timer Code Variables
+var FULL_DASH_ARRAY = 283;
+var WARNING_THRESHOLD = 0;
+var ALERT_THRESHOLD = 0;
+var COLOR_CODES = {
+  info: {
+    color: "green"
+  },
+  warning: {
+    color: "orange",
+    threshold: WARNING_THRESHOLD
+  },
+  alert: {
+    color: "red",
+    threshold: ALERT_THRESHOLD
+  }
+};
+var TIME_LIMIT = 0; // Timer Code Variables End
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
-    return {
-      search: '',
-      editmode: false,
-      sections: {},
-      courses: {},
-      teachers: {},
-      sessions: {},
-      assign_name: '',
-      assign_type: '',
-      current_session_id: '',
-      session_assignments: {},
-      session_quizzes: {},
-      current_quiz: {},
-      assignment_form: new Form({
-        id: '',
-        session_id: '',
-        title: '',
-        description: '',
-        marks: '',
-        file: null,
-        file_name: ''
-      }),
-      form: new Form({
-        id: '',
-        section_id: '',
-        course_id: '',
-        teacher_id: '',
-        meeting_url: '',
-        state: ''
-      })
-    };
+    var _ref;
+
+    return _ref = {
+      timeLimit: 0,
+      timePassed: 0
+    }, _defineProperty(_ref, "timePassed", 0), _defineProperty(_ref, "timerInterval", null), _defineProperty(_ref, "trigger", 0), _defineProperty(_ref, "search", ''), _defineProperty(_ref, "editmode", false), _defineProperty(_ref, "sections", {}), _defineProperty(_ref, "courses", {}), _defineProperty(_ref, "teachers", {}), _defineProperty(_ref, "sessions", {}), _defineProperty(_ref, "assign_name", ''), _defineProperty(_ref, "assign_type", ''), _defineProperty(_ref, "current_session_id", ''), _defineProperty(_ref, "session_assignments", {}), _defineProperty(_ref, "session_quizzes", {}), _defineProperty(_ref, "current_quiz", {}), _defineProperty(_ref, "current_quiz_detail", ''), _defineProperty(_ref, "assignment_form", new Form({
+      id: '',
+      session_id: '',
+      title: '',
+      description: '',
+      marks: '',
+      file: null,
+      file_name: ''
+    })), _defineProperty(_ref, "form", new Form({
+      id: '',
+      section_id: '',
+      course_id: '',
+      teacher_id: '',
+      meeting_url: '',
+      state: ''
+    })), _ref;
   },
   methods: {
     getResults: function getResults() {
@@ -4690,8 +4712,8 @@ __webpack_require__.r(__webpack_exports__);
       var count = 0;
 
       for (var i = 0; i < this.session_quizzes.length; i++) {
-        axios.get('api/checkquizsubmission?quiz_id=' + session.quizzes[i].id).then(function (_ref) {
-          var data = _ref.data;
+        axios.get('api/checkquizsubmission?quiz_id=' + session.quizzes[i].id).then(function (_ref2) {
+          var data = _ref2.data;
           console.log(count);
 
           if (data == 0) {
@@ -4716,12 +4738,22 @@ __webpack_require__.r(__webpack_exports__);
     },
     openQuiz: function openQuiz(quiz) {
       this.current_quiz = quiz;
+      this.current_quiz_detail = quiz.session.section.classroom.title + quiz.session.section.title + ' - ' + quiz.session.course.title + ' | ' + quiz.session.teacher.name + " | ";
       $('#quizModalDetail').modal('show');
     },
     submitQuiz: function submitQuiz(quiz) {
-      this.current_quiz = quiz;
-      axios.get('api/checkquizsubmission?quiz_id=' + quiz.id).then(function (_ref2) {
-        var data = _ref2.data;
+      var _this3 = this;
+
+      this.current_quiz = quiz; //TIMER WORK
+
+      TIME_LIMIT = this.current_quiz.minutes * 60;
+      COLOR_CODES.warning.threshold = TIME_LIMIT * .3;
+      COLOR_CODES.alert.threshold = TIME_LIMIT * .1;
+      console.log(WARNING_THRESHOLD, ALERT_THRESHOLD);
+      this.current_quiz_detail = quiz.session.section.classroom.title + quiz.session.section.title + ' - ' + quiz.session.course.title + ' | ' + quiz.session.teacher.name + " | ";
+      console.log(quiz.session.course);
+      axios.get('api/checkquizsubmission?quiz_id=' + quiz.id).then(function (_ref3) {
+        var data = _ref3.data;
 
         if (data == 0) {
           $('#submitQuizModalDetail').modal('hide');
@@ -4731,6 +4763,11 @@ __webpack_require__.r(__webpack_exports__);
           });
         } else {
           $('#submitQuizModalDetail').modal('show');
+          _this3.trigger++;
+
+          if (_this3.trigger == 1) {
+            _this3.startTimer();
+          }
         }
       });
     },
@@ -4750,8 +4787,8 @@ __webpack_require__.r(__webpack_exports__);
         }
       }
 
-      axios.post('api/quizsubmission?marks_obtained=' + marks_obtained + '&quiz_id=' + current_quiz.id).then(function (_ref3) {
-        var data = _ref3.data;
+      axios.post('api/quizsubmission?marks_obtained=' + marks_obtained + '&quiz_id=' + current_quiz.id).then(function (_ref4) {
+        var data = _ref4.data;
         $('#submitQuizModalDetail').modal('hide');
         Toast.fire({
           icon: 'success',
@@ -4762,7 +4799,7 @@ __webpack_require__.r(__webpack_exports__);
       console.log(marks_obtained);
     },
     deleteSession: function deleteSession(id) {
-      var _this3 = this;
+      var _this4 = this;
 
       Swal.fire({
         title: 'Are you sure?',
@@ -4774,7 +4811,7 @@ __webpack_require__.r(__webpack_exports__);
         confirmButtonText: 'Yes, delete it!'
       }).then(function (result) {
         if (result.value) {
-          _this3.form["delete"]('api/session/' + id);
+          _this4.form["delete"]('api/session/' + id);
 
           Swal.fire('Deleted!', 'Your file has been deleted.', 'success');
           Fire.$emit('searching');
@@ -4782,39 +4819,39 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     loadSection: function loadSection() {
-      var _this4 = this;
+      var _this5 = this;
 
-      axios.get('api/get_session_section').then(function (_ref4) {
-        var data = _ref4.data;
-        return _this4.sections = data;
+      axios.get('api/get_session_section').then(function (_ref5) {
+        var data = _ref5.data;
+        return _this5.sections = data;
       });
     },
     loadCourse: function loadCourse() {
-      var _this5 = this;
+      var _this6 = this;
 
-      axios.get('api/get_session_course').then(function (_ref5) {
-        var data = _ref5.data;
-        return _this5.courses = data;
+      axios.get('api/get_session_course').then(function (_ref6) {
+        var data = _ref6.data;
+        return _this6.courses = data;
       });
     },
     loadTeacher: function loadTeacher() {
-      var _this6 = this;
+      var _this7 = this;
 
-      axios.get('api/get_session_teacher').then(function (_ref6) {
-        var data = _ref6.data;
-        return _this6.teachers = data;
+      axios.get('api/get_session_teacher').then(function (_ref7) {
+        var data = _ref7.data;
+        return _this7.teachers = data;
       });
     },
     loadSession: function loadSession() {
-      var _this7 = this;
+      var _this8 = this;
 
-      axios.get('api/session').then(function (_ref7) {
-        var data = _ref7.data;
-        return _this7.sessions = data;
+      axios.get('api/session').then(function (_ref8) {
+        var data = _ref8.data;
+        return _this8.sessions = data;
       });
     },
     createSession: function createSession() {
-      var _this8 = this;
+      var _this9 = this;
 
       this.$Progress.start();
       this.form.post('api/session').then(function () {
@@ -4825,11 +4862,11 @@ __webpack_require__.r(__webpack_exports__);
           title: 'Session Created Successfully'
         });
 
-        _this8.$Progress.finish();
+        _this9.$Progress.finish();
       })["catch"](function () {});
     },
     createAssignment: function createAssignment() {
-      var _this9 = this;
+      var _this10 = this;
 
       this.$Progress.start();
       this.assignment_form.post('api/assignment').then(function () {
@@ -4841,11 +4878,11 @@ __webpack_require__.r(__webpack_exports__);
           title: 'Assignment Created Successfully'
         });
 
-        _this9.$Progress.finish();
+        _this10.$Progress.finish();
       })["catch"](function () {});
     },
     updateSession: function updateSession() {
-      var _this10 = this;
+      var _this11 = this;
 
       this.$Progress.start();
       this.form.put('api/session/' + this.form.id).then(function () {
@@ -4856,29 +4893,86 @@ __webpack_require__.r(__webpack_exports__);
           title: 'Session Updated Successfully'
         });
 
-        _this10.$Progress.finish();
+        _this11.$Progress.finish();
       })["catch"](function () {});
     },
     searchit: function searchit() {
       Fire.$emit('searching');
+    },
+    onTimesUp: function onTimesUp() {
+      clearInterval(this.timerInterval);
+      this.markQuiz(this.current_quiz);
+    },
+    startTimer: function startTimer() {
+      var _this12 = this;
+
+      this.timerInterval = setInterval(function () {
+        return _this12.timePassed += 1;
+      }, 1000);
+    }
+  },
+  computed: {
+    circleDasharray: function circleDasharray() {
+      return "".concat((this.timeFraction * FULL_DASH_ARRAY).toFixed(0), " 283");
+    },
+    formattedTimeLeft: function formattedTimeLeft() {
+      var timeLeft = this.timeLeft;
+      var minutes = Math.floor(timeLeft / 60);
+      var seconds = timeLeft % 60;
+
+      if (seconds < 10) {
+        seconds = "0".concat(seconds);
+      }
+
+      return "".concat(minutes, ":").concat(seconds);
+    },
+    timeLeft: function timeLeft() {
+      return TIME_LIMIT - this.timePassed;
+    },
+    timeFraction: function timeFraction() {
+      var rawTimeFraction = this.timeLeft / TIME_LIMIT;
+      return rawTimeFraction - 1 / TIME_LIMIT * (1 - rawTimeFraction);
+    },
+    remainingPathColor: function remainingPathColor() {
+      var alert = COLOR_CODES.alert,
+          warning = COLOR_CODES.warning,
+          info = COLOR_CODES.info;
+
+      if (this.timeLeft <= alert.threshold) {
+        return alert.color;
+      } else if (this.timeLeft <= warning.threshold) {
+        return warning.color;
+      } else {
+        return info.color;
+      }
+    }
+  },
+  watch: {
+    timeLeft: function timeLeft(newValue) {
+      if (newValue === 0) {
+        this.onTimesUp();
+      }
+    },
+    testProp: function testProp(newVal, oldVal) {
+      this.startTimer();
     }
   },
   mounted: function mounted() {
-    var _this11 = this;
+    var _this13 = this;
 
     this.loadSession();
     this.loadSection();
     this.loadCourse();
     this.loadTeacher();
     Fire.$on('searching', function () {
-      var query = _this11.search;
-      axios.get('api/findsession?q=' + query).then(function (_ref8) {
-        var data = _ref8.data;
-        return _this11.sessions = data;
+      var query = _this13.search;
+      axios.get('api/findsession?q=' + query).then(function (_ref9) {
+        var data = _ref9.data;
+        return _this13.sessions = data;
       });
     });
     Fire.$on('RefreshTable', function () {
-      return _this11.loadSession();
+      return _this13.loadSession();
     });
   }
 });
@@ -28804,6 +28898,112 @@ return src;
   return Chartkick;
 
 })));
+
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/index.js!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/sass-loader/dist/cjs.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Sessions.vue?vue&type=style&index=0&id=1b5960f0&scoped=true&lang=scss&":
+/*!******************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--7-2!./node_modules/sass-loader/dist/cjs.js??ref--7-3!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Sessions.vue?vue&type=style&index=0&id=1b5960f0&scoped=true&lang=scss& ***!
+  \******************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loader/lib/css-base.js */ "./node_modules/css-loader/lib/css-base.js")(false);
+// imports
+
+
+// module
+exports.push([module.i, ".base-timer[data-v-1b5960f0] {\n  position: relative;\n  width: 200px;\n  height: 200px;\n}\n.base-timer__svg[data-v-1b5960f0] {\n  transform: scaleX(-1);\n}\n.base-timer__circle[data-v-1b5960f0] {\n  fill: none;\n  stroke: none;\n}\n.base-timer__path-elapsed[data-v-1b5960f0] {\n  stroke-width: 5px;\n  stroke: white;\n}\n.base-timer__path-remaining[data-v-1b5960f0] {\n  stroke-width: 5px;\n  stroke-linecap: round;\n  transform: rotate(90deg);\n  transform-origin: center;\n  transition: 1s linear all;\n  fill-rule: nonzero;\n  stroke: currentColor;\n}\n.base-timer__path-remaining.green[data-v-1b5960f0] {\n  color: #41b883;\n}\n.base-timer__path-remaining.orange[data-v-1b5960f0] {\n  color: orange;\n}\n.base-timer__path-remaining.red[data-v-1b5960f0] {\n  color: red;\n}\n.base-timer__label[data-v-1b5960f0] {\n  position: absolute;\n  width: 200px;\n  height: 200px;\n  top: 0;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  font-size: 40px;\n}", ""]);
+
+// exports
+
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/lib/css-base.js":
+/*!*************************************************!*\
+  !*** ./node_modules/css-loader/lib/css-base.js ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+/*
+	MIT License http://www.opensource.org/licenses/mit-license.php
+	Author Tobias Koppers @sokra
+*/
+// css base code, injected by the css-loader
+module.exports = function(useSourceMap) {
+	var list = [];
+
+	// return the list of modules as css string
+	list.toString = function toString() {
+		return this.map(function (item) {
+			var content = cssWithMappingToString(item, useSourceMap);
+			if(item[2]) {
+				return "@media " + item[2] + "{" + content + "}";
+			} else {
+				return content;
+			}
+		}).join("");
+	};
+
+	// import a list of modules into the list
+	list.i = function(modules, mediaQuery) {
+		if(typeof modules === "string")
+			modules = [[null, modules, ""]];
+		var alreadyImportedModules = {};
+		for(var i = 0; i < this.length; i++) {
+			var id = this[i][0];
+			if(typeof id === "number")
+				alreadyImportedModules[id] = true;
+		}
+		for(i = 0; i < modules.length; i++) {
+			var item = modules[i];
+			// skip already imported module
+			// this implementation is not 100% perfect for weird media query combinations
+			//  when a module is imported multiple times with different media queries.
+			//  I hope this will never occur (Hey this way we have smaller bundles)
+			if(typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
+				if(mediaQuery && !item[2]) {
+					item[2] = mediaQuery;
+				} else if(mediaQuery) {
+					item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
+				}
+				list.push(item);
+			}
+		}
+	};
+	return list;
+};
+
+function cssWithMappingToString(item, useSourceMap) {
+	var content = item[1] || '';
+	var cssMapping = item[3];
+	if (!cssMapping) {
+		return content;
+	}
+
+	if (useSourceMap && typeof btoa === 'function') {
+		var sourceMapping = toComment(cssMapping);
+		var sourceURLs = cssMapping.sources.map(function (source) {
+			return '/*# sourceURL=' + cssMapping.sourceRoot + source + ' */'
+		});
+
+		return [content].concat(sourceURLs).concat([sourceMapping]).join('\n');
+	}
+
+	return [content].join('\n');
+}
+
+// Adapted from convert-source-map (MIT)
+function toComment(sourceMap) {
+	// eslint-disable-next-line no-undef
+	var base64 = btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap))));
+	var data = 'sourceMappingURL=data:application/json;charset=utf-8;base64,' + base64;
+
+	return '/*# ' + data + ' */';
+}
 
 
 /***/ }),
@@ -91387,6 +91587,545 @@ module.exports = function shimFlags() {
 
 /***/ }),
 
+/***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/sass-loader/dist/cjs.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Sessions.vue?vue&type=style&index=0&id=1b5960f0&scoped=true&lang=scss&":
+/*!**********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/style-loader!./node_modules/css-loader!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--7-2!./node_modules/sass-loader/dist/cjs.js??ref--7-3!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Sessions.vue?vue&type=style&index=0&id=1b5960f0&scoped=true&lang=scss& ***!
+  \**********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(/*! !../../../node_modules/css-loader!../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../node_modules/postcss-loader/src??ref--7-2!../../../node_modules/sass-loader/dist/cjs.js??ref--7-3!../../../node_modules/vue-loader/lib??vue-loader-options!./Sessions.vue?vue&type=style&index=0&id=1b5960f0&scoped=true&lang=scss& */ "./node_modules/css-loader/index.js!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/sass-loader/dist/cjs.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Sessions.vue?vue&type=style&index=0&id=1b5960f0&scoped=true&lang=scss&");
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(/*! ../../../node_modules/style-loader/lib/addStyles.js */ "./node_modules/style-loader/lib/addStyles.js")(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {}
+
+/***/ }),
+
+/***/ "./node_modules/style-loader/lib/addStyles.js":
+/*!****************************************************!*\
+  !*** ./node_modules/style-loader/lib/addStyles.js ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+/*
+	MIT License http://www.opensource.org/licenses/mit-license.php
+	Author Tobias Koppers @sokra
+*/
+
+var stylesInDom = {};
+
+var	memoize = function (fn) {
+	var memo;
+
+	return function () {
+		if (typeof memo === "undefined") memo = fn.apply(this, arguments);
+		return memo;
+	};
+};
+
+var isOldIE = memoize(function () {
+	// Test for IE <= 9 as proposed by Browserhacks
+	// @see http://browserhacks.com/#hack-e71d8692f65334173fee715c222cb805
+	// Tests for existence of standard globals is to allow style-loader
+	// to operate correctly into non-standard environments
+	// @see https://github.com/webpack-contrib/style-loader/issues/177
+	return window && document && document.all && !window.atob;
+});
+
+var getTarget = function (target, parent) {
+  if (parent){
+    return parent.querySelector(target);
+  }
+  return document.querySelector(target);
+};
+
+var getElement = (function (fn) {
+	var memo = {};
+
+	return function(target, parent) {
+                // If passing function in options, then use it for resolve "head" element.
+                // Useful for Shadow Root style i.e
+                // {
+                //   insertInto: function () { return document.querySelector("#foo").shadowRoot }
+                // }
+                if (typeof target === 'function') {
+                        return target();
+                }
+                if (typeof memo[target] === "undefined") {
+			var styleTarget = getTarget.call(this, target, parent);
+			// Special case to return head of iframe instead of iframe itself
+			if (window.HTMLIFrameElement && styleTarget instanceof window.HTMLIFrameElement) {
+				try {
+					// This will throw an exception if access to iframe is blocked
+					// due to cross-origin restrictions
+					styleTarget = styleTarget.contentDocument.head;
+				} catch(e) {
+					styleTarget = null;
+				}
+			}
+			memo[target] = styleTarget;
+		}
+		return memo[target]
+	};
+})();
+
+var singleton = null;
+var	singletonCounter = 0;
+var	stylesInsertedAtTop = [];
+
+var	fixUrls = __webpack_require__(/*! ./urls */ "./node_modules/style-loader/lib/urls.js");
+
+module.exports = function(list, options) {
+	if (typeof DEBUG !== "undefined" && DEBUG) {
+		if (typeof document !== "object") throw new Error("The style-loader cannot be used in a non-browser environment");
+	}
+
+	options = options || {};
+
+	options.attrs = typeof options.attrs === "object" ? options.attrs : {};
+
+	// Force single-tag solution on IE6-9, which has a hard limit on the # of <style>
+	// tags it will allow on a page
+	if (!options.singleton && typeof options.singleton !== "boolean") options.singleton = isOldIE();
+
+	// By default, add <style> tags to the <head> element
+        if (!options.insertInto) options.insertInto = "head";
+
+	// By default, add <style> tags to the bottom of the target
+	if (!options.insertAt) options.insertAt = "bottom";
+
+	var styles = listToStyles(list, options);
+
+	addStylesToDom(styles, options);
+
+	return function update (newList) {
+		var mayRemove = [];
+
+		for (var i = 0; i < styles.length; i++) {
+			var item = styles[i];
+			var domStyle = stylesInDom[item.id];
+
+			domStyle.refs--;
+			mayRemove.push(domStyle);
+		}
+
+		if(newList) {
+			var newStyles = listToStyles(newList, options);
+			addStylesToDom(newStyles, options);
+		}
+
+		for (var i = 0; i < mayRemove.length; i++) {
+			var domStyle = mayRemove[i];
+
+			if(domStyle.refs === 0) {
+				for (var j = 0; j < domStyle.parts.length; j++) domStyle.parts[j]();
+
+				delete stylesInDom[domStyle.id];
+			}
+		}
+	};
+};
+
+function addStylesToDom (styles, options) {
+	for (var i = 0; i < styles.length; i++) {
+		var item = styles[i];
+		var domStyle = stylesInDom[item.id];
+
+		if(domStyle) {
+			domStyle.refs++;
+
+			for(var j = 0; j < domStyle.parts.length; j++) {
+				domStyle.parts[j](item.parts[j]);
+			}
+
+			for(; j < item.parts.length; j++) {
+				domStyle.parts.push(addStyle(item.parts[j], options));
+			}
+		} else {
+			var parts = [];
+
+			for(var j = 0; j < item.parts.length; j++) {
+				parts.push(addStyle(item.parts[j], options));
+			}
+
+			stylesInDom[item.id] = {id: item.id, refs: 1, parts: parts};
+		}
+	}
+}
+
+function listToStyles (list, options) {
+	var styles = [];
+	var newStyles = {};
+
+	for (var i = 0; i < list.length; i++) {
+		var item = list[i];
+		var id = options.base ? item[0] + options.base : item[0];
+		var css = item[1];
+		var media = item[2];
+		var sourceMap = item[3];
+		var part = {css: css, media: media, sourceMap: sourceMap};
+
+		if(!newStyles[id]) styles.push(newStyles[id] = {id: id, parts: [part]});
+		else newStyles[id].parts.push(part);
+	}
+
+	return styles;
+}
+
+function insertStyleElement (options, style) {
+	var target = getElement(options.insertInto)
+
+	if (!target) {
+		throw new Error("Couldn't find a style target. This probably means that the value for the 'insertInto' parameter is invalid.");
+	}
+
+	var lastStyleElementInsertedAtTop = stylesInsertedAtTop[stylesInsertedAtTop.length - 1];
+
+	if (options.insertAt === "top") {
+		if (!lastStyleElementInsertedAtTop) {
+			target.insertBefore(style, target.firstChild);
+		} else if (lastStyleElementInsertedAtTop.nextSibling) {
+			target.insertBefore(style, lastStyleElementInsertedAtTop.nextSibling);
+		} else {
+			target.appendChild(style);
+		}
+		stylesInsertedAtTop.push(style);
+	} else if (options.insertAt === "bottom") {
+		target.appendChild(style);
+	} else if (typeof options.insertAt === "object" && options.insertAt.before) {
+		var nextSibling = getElement(options.insertAt.before, target);
+		target.insertBefore(style, nextSibling);
+	} else {
+		throw new Error("[Style Loader]\n\n Invalid value for parameter 'insertAt' ('options.insertAt') found.\n Must be 'top', 'bottom', or Object.\n (https://github.com/webpack-contrib/style-loader#insertat)\n");
+	}
+}
+
+function removeStyleElement (style) {
+	if (style.parentNode === null) return false;
+	style.parentNode.removeChild(style);
+
+	var idx = stylesInsertedAtTop.indexOf(style);
+	if(idx >= 0) {
+		stylesInsertedAtTop.splice(idx, 1);
+	}
+}
+
+function createStyleElement (options) {
+	var style = document.createElement("style");
+
+	if(options.attrs.type === undefined) {
+		options.attrs.type = "text/css";
+	}
+
+	if(options.attrs.nonce === undefined) {
+		var nonce = getNonce();
+		if (nonce) {
+			options.attrs.nonce = nonce;
+		}
+	}
+
+	addAttrs(style, options.attrs);
+	insertStyleElement(options, style);
+
+	return style;
+}
+
+function createLinkElement (options) {
+	var link = document.createElement("link");
+
+	if(options.attrs.type === undefined) {
+		options.attrs.type = "text/css";
+	}
+	options.attrs.rel = "stylesheet";
+
+	addAttrs(link, options.attrs);
+	insertStyleElement(options, link);
+
+	return link;
+}
+
+function addAttrs (el, attrs) {
+	Object.keys(attrs).forEach(function (key) {
+		el.setAttribute(key, attrs[key]);
+	});
+}
+
+function getNonce() {
+	if (false) {}
+
+	return __webpack_require__.nc;
+}
+
+function addStyle (obj, options) {
+	var style, update, remove, result;
+
+	// If a transform function was defined, run it on the css
+	if (options.transform && obj.css) {
+	    result = typeof options.transform === 'function'
+		 ? options.transform(obj.css) 
+		 : options.transform.default(obj.css);
+
+	    if (result) {
+	    	// If transform returns a value, use that instead of the original css.
+	    	// This allows running runtime transformations on the css.
+	    	obj.css = result;
+	    } else {
+	    	// If the transform function returns a falsy value, don't add this css.
+	    	// This allows conditional loading of css
+	    	return function() {
+	    		// noop
+	    	};
+	    }
+	}
+
+	if (options.singleton) {
+		var styleIndex = singletonCounter++;
+
+		style = singleton || (singleton = createStyleElement(options));
+
+		update = applyToSingletonTag.bind(null, style, styleIndex, false);
+		remove = applyToSingletonTag.bind(null, style, styleIndex, true);
+
+	} else if (
+		obj.sourceMap &&
+		typeof URL === "function" &&
+		typeof URL.createObjectURL === "function" &&
+		typeof URL.revokeObjectURL === "function" &&
+		typeof Blob === "function" &&
+		typeof btoa === "function"
+	) {
+		style = createLinkElement(options);
+		update = updateLink.bind(null, style, options);
+		remove = function () {
+			removeStyleElement(style);
+
+			if(style.href) URL.revokeObjectURL(style.href);
+		};
+	} else {
+		style = createStyleElement(options);
+		update = applyToTag.bind(null, style);
+		remove = function () {
+			removeStyleElement(style);
+		};
+	}
+
+	update(obj);
+
+	return function updateStyle (newObj) {
+		if (newObj) {
+			if (
+				newObj.css === obj.css &&
+				newObj.media === obj.media &&
+				newObj.sourceMap === obj.sourceMap
+			) {
+				return;
+			}
+
+			update(obj = newObj);
+		} else {
+			remove();
+		}
+	};
+}
+
+var replaceText = (function () {
+	var textStore = [];
+
+	return function (index, replacement) {
+		textStore[index] = replacement;
+
+		return textStore.filter(Boolean).join('\n');
+	};
+})();
+
+function applyToSingletonTag (style, index, remove, obj) {
+	var css = remove ? "" : obj.css;
+
+	if (style.styleSheet) {
+		style.styleSheet.cssText = replaceText(index, css);
+	} else {
+		var cssNode = document.createTextNode(css);
+		var childNodes = style.childNodes;
+
+		if (childNodes[index]) style.removeChild(childNodes[index]);
+
+		if (childNodes.length) {
+			style.insertBefore(cssNode, childNodes[index]);
+		} else {
+			style.appendChild(cssNode);
+		}
+	}
+}
+
+function applyToTag (style, obj) {
+	var css = obj.css;
+	var media = obj.media;
+
+	if(media) {
+		style.setAttribute("media", media)
+	}
+
+	if(style.styleSheet) {
+		style.styleSheet.cssText = css;
+	} else {
+		while(style.firstChild) {
+			style.removeChild(style.firstChild);
+		}
+
+		style.appendChild(document.createTextNode(css));
+	}
+}
+
+function updateLink (link, options, obj) {
+	var css = obj.css;
+	var sourceMap = obj.sourceMap;
+
+	/*
+		If convertToAbsoluteUrls isn't defined, but sourcemaps are enabled
+		and there is no publicPath defined then lets turn convertToAbsoluteUrls
+		on by default.  Otherwise default to the convertToAbsoluteUrls option
+		directly
+	*/
+	var autoFixUrls = options.convertToAbsoluteUrls === undefined && sourceMap;
+
+	if (options.convertToAbsoluteUrls || autoFixUrls) {
+		css = fixUrls(css);
+	}
+
+	if (sourceMap) {
+		// http://stackoverflow.com/a/26603875
+		css += "\n/*# sourceMappingURL=data:application/json;base64," + btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))) + " */";
+	}
+
+	var blob = new Blob([css], { type: "text/css" });
+
+	var oldSrc = link.href;
+
+	link.href = URL.createObjectURL(blob);
+
+	if(oldSrc) URL.revokeObjectURL(oldSrc);
+}
+
+
+/***/ }),
+
+/***/ "./node_modules/style-loader/lib/urls.js":
+/*!***********************************************!*\
+  !*** ./node_modules/style-loader/lib/urls.js ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+
+/**
+ * When source maps are enabled, `style-loader` uses a link element with a data-uri to
+ * embed the css on the page. This breaks all relative urls because now they are relative to a
+ * bundle instead of the current page.
+ *
+ * One solution is to only use full urls, but that may be impossible.
+ *
+ * Instead, this function "fixes" the relative urls to be absolute according to the current page location.
+ *
+ * A rudimentary test suite is located at `test/fixUrls.js` and can be run via the `npm test` command.
+ *
+ */
+
+module.exports = function (css) {
+  // get current location
+  var location = typeof window !== "undefined" && window.location;
+
+  if (!location) {
+    throw new Error("fixUrls requires window.location");
+  }
+
+	// blank or null?
+	if (!css || typeof css !== "string") {
+	  return css;
+  }
+
+  var baseUrl = location.protocol + "//" + location.host;
+  var currentDir = baseUrl + location.pathname.replace(/\/[^\/]*$/, "/");
+
+	// convert each url(...)
+	/*
+	This regular expression is just a way to recursively match brackets within
+	a string.
+
+	 /url\s*\(  = Match on the word "url" with any whitespace after it and then a parens
+	   (  = Start a capturing group
+	     (?:  = Start a non-capturing group
+	         [^)(]  = Match anything that isn't a parentheses
+	         |  = OR
+	         \(  = Match a start parentheses
+	             (?:  = Start another non-capturing groups
+	                 [^)(]+  = Match anything that isn't a parentheses
+	                 |  = OR
+	                 \(  = Match a start parentheses
+	                     [^)(]*  = Match anything that isn't a parentheses
+	                 \)  = Match a end parentheses
+	             )  = End Group
+              *\) = Match anything and then a close parens
+          )  = Close non-capturing group
+          *  = Match anything
+       )  = Close capturing group
+	 \)  = Match a close parens
+
+	 /gi  = Get all matches, not the first.  Be case insensitive.
+	 */
+	var fixedCss = css.replace(/url\s*\(((?:[^)(]|\((?:[^)(]+|\([^)(]*\))*\))*)\)/gi, function(fullMatch, origUrl) {
+		// strip quotes (if they exist)
+		var unquotedOrigUrl = origUrl
+			.trim()
+			.replace(/^"(.*)"$/, function(o, $1){ return $1; })
+			.replace(/^'(.*)'$/, function(o, $1){ return $1; });
+
+		// already a full url? no change
+		if (/^(#|data:|http:\/\/|https:\/\/|file:\/\/\/|\s*$)/i.test(unquotedOrigUrl)) {
+		  return fullMatch;
+		}
+
+		// convert the url to a full url
+		var newUrl;
+
+		if (unquotedOrigUrl.indexOf("//") === 0) {
+		  	//TODO: should we add protocol?
+			newUrl = unquotedOrigUrl;
+		} else if (unquotedOrigUrl.indexOf("/") === 0) {
+			// path should be relative to the base url
+			newUrl = baseUrl + unquotedOrigUrl; // already starts with '/'
+		} else {
+			// path should be relative to current directory
+			newUrl = currentDir + unquotedOrigUrl.replace(/^\.\//, ""); // Strip leading './'
+		}
+
+		// send back the fixed url(...)
+		return "url(" + JSON.stringify(newUrl) + ")";
+	});
+
+	// send back the fixed css
+	return fixedCss;
+};
+
+
+/***/ }),
+
 /***/ "./node_modules/sweetalert2/dist/sweetalert2.all.js":
 /*!**********************************************************!*\
   !*** ./node_modules/sweetalert2/dist/sweetalert2.all.js ***!
@@ -98119,58 +98858,6 @@ var render = function() {
           _vm._v(" "),
           _c("has-error", {
             attrs: { form: _vm.option_form, field: "is_correct" }
-          }),
-          _vm._v(" "),
-          _c("input", {
-            directives: [
-              {
-                name: "model",
-                rawName: "v-model",
-                value: _vm.option_form.is_selected,
-                expression: "option_form.is_selected"
-              }
-            ],
-            class: { "is-invalid": _vm.option_form.errors.has("is_selected") },
-            attrs: { id: "is_selected", type: "checkbox", name: "is_selected" },
-            domProps: {
-              checked: Array.isArray(_vm.option_form.is_selected)
-                ? _vm._i(_vm.option_form.is_selected, null) > -1
-                : _vm.option_form.is_selected
-            },
-            on: {
-              change: function($event) {
-                var $$a = _vm.option_form.is_selected,
-                  $$el = $event.target,
-                  $$c = $$el.checked ? true : false
-                if (Array.isArray($$a)) {
-                  var $$v = null,
-                    $$i = _vm._i($$a, $$v)
-                  if ($$el.checked) {
-                    $$i < 0 &&
-                      _vm.$set(
-                        _vm.option_form,
-                        "is_selected",
-                        $$a.concat([$$v])
-                      )
-                  } else {
-                    $$i > -1 &&
-                      _vm.$set(
-                        _vm.option_form,
-                        "is_selected",
-                        $$a.slice(0, $$i).concat($$a.slice($$i + 1))
-                      )
-                  }
-                } else {
-                  _vm.$set(_vm.option_form, "is_selected", $$c)
-                }
-              }
-            }
-          }),
-          _vm._v(" "),
-          _c("label", [_vm._v("Is Selected")]),
-          _vm._v(" "),
-          _c("has-error", {
-            attrs: { form: _vm.option_form, field: "is_selected" }
           })
         ],
         1
@@ -98994,68 +99681,6 @@ var render = function() {
                       _vm._v(" "),
                       _c("has-error", {
                         attrs: { form: _vm.option_a_form, field: "is_correct" }
-                      }),
-                      _vm._v(" "),
-                      _c("input", {
-                        directives: [
-                          {
-                            name: "model",
-                            rawName: "v-model",
-                            value: _vm.option_a_form.is_selected,
-                            expression: "option_a_form.is_selected"
-                          }
-                        ],
-                        class: {
-                          "is-invalid": _vm.option_a_form.errors.has(
-                            "is_selected"
-                          )
-                        },
-                        attrs: {
-                          id: "is_selected",
-                          type: "checkbox",
-                          name: "is_selected"
-                        },
-                        domProps: {
-                          checked: Array.isArray(_vm.option_a_form.is_selected)
-                            ? _vm._i(_vm.option_a_form.is_selected, null) > -1
-                            : _vm.option_a_form.is_selected
-                        },
-                        on: {
-                          change: function($event) {
-                            var $$a = _vm.option_a_form.is_selected,
-                              $$el = $event.target,
-                              $$c = $$el.checked ? true : false
-                            if (Array.isArray($$a)) {
-                              var $$v = null,
-                                $$i = _vm._i($$a, $$v)
-                              if ($$el.checked) {
-                                $$i < 0 &&
-                                  _vm.$set(
-                                    _vm.option_a_form,
-                                    "is_selected",
-                                    $$a.concat([$$v])
-                                  )
-                              } else {
-                                $$i > -1 &&
-                                  _vm.$set(
-                                    _vm.option_a_form,
-                                    "is_selected",
-                                    $$a.slice(0, $$i).concat($$a.slice($$i + 1))
-                                  )
-                              }
-                            } else {
-                              _vm.$set(_vm.option_a_form, "is_selected", $$c)
-                            }
-                          }
-                        }
-                      }),
-                      _vm._v(" "),
-                      _c("label", { staticClass: "black" }, [
-                        _vm._v("Is Selected")
-                      ]),
-                      _vm._v(" "),
-                      _c("has-error", {
-                        attrs: { form: _vm.option_a_form, field: "is_selected" }
                       })
                     ],
                     1
@@ -99165,68 +99790,6 @@ var render = function() {
                       _vm._v(" "),
                       _c("has-error", {
                         attrs: { form: _vm.option_b_form, field: "is_correct" }
-                      }),
-                      _vm._v(" "),
-                      _c("input", {
-                        directives: [
-                          {
-                            name: "model",
-                            rawName: "v-model",
-                            value: _vm.option_b_form.is_selected,
-                            expression: "option_b_form.is_selected"
-                          }
-                        ],
-                        class: {
-                          "is-invalid": _vm.option_b_form.errors.has(
-                            "is_selected"
-                          )
-                        },
-                        attrs: {
-                          id: "is_selected",
-                          type: "checkbox",
-                          name: "is_selected"
-                        },
-                        domProps: {
-                          checked: Array.isArray(_vm.option_b_form.is_selected)
-                            ? _vm._i(_vm.option_b_form.is_selected, null) > -1
-                            : _vm.option_b_form.is_selected
-                        },
-                        on: {
-                          change: function($event) {
-                            var $$a = _vm.option_b_form.is_selected,
-                              $$el = $event.target,
-                              $$c = $$el.checked ? true : false
-                            if (Array.isArray($$a)) {
-                              var $$v = null,
-                                $$i = _vm._i($$a, $$v)
-                              if ($$el.checked) {
-                                $$i < 0 &&
-                                  _vm.$set(
-                                    _vm.option_b_form,
-                                    "is_selected",
-                                    $$a.concat([$$v])
-                                  )
-                              } else {
-                                $$i > -1 &&
-                                  _vm.$set(
-                                    _vm.option_b_form,
-                                    "is_selected",
-                                    $$a.slice(0, $$i).concat($$a.slice($$i + 1))
-                                  )
-                              }
-                            } else {
-                              _vm.$set(_vm.option_b_form, "is_selected", $$c)
-                            }
-                          }
-                        }
-                      }),
-                      _vm._v(" "),
-                      _c("label", { staticClass: "black" }, [
-                        _vm._v("Is Selected")
-                      ]),
-                      _vm._v(" "),
-                      _c("has-error", {
-                        attrs: { form: _vm.option_b_form, field: "is_selected" }
                       })
                     ],
                     1
@@ -99336,68 +99899,6 @@ var render = function() {
                       _vm._v(" "),
                       _c("has-error", {
                         attrs: { form: _vm.option_c_form, field: "is_correct" }
-                      }),
-                      _vm._v(" "),
-                      _c("input", {
-                        directives: [
-                          {
-                            name: "model",
-                            rawName: "v-model",
-                            value: _vm.option_c_form.is_selected,
-                            expression: "option_c_form.is_selected"
-                          }
-                        ],
-                        class: {
-                          "is-invalid": _vm.option_c_form.errors.has(
-                            "is_selected"
-                          )
-                        },
-                        attrs: {
-                          id: "is_selected",
-                          type: "checkbox",
-                          name: "is_selected"
-                        },
-                        domProps: {
-                          checked: Array.isArray(_vm.option_c_form.is_selected)
-                            ? _vm._i(_vm.option_c_form.is_selected, null) > -1
-                            : _vm.option_c_form.is_selected
-                        },
-                        on: {
-                          change: function($event) {
-                            var $$a = _vm.option_c_form.is_selected,
-                              $$el = $event.target,
-                              $$c = $$el.checked ? true : false
-                            if (Array.isArray($$a)) {
-                              var $$v = null,
-                                $$i = _vm._i($$a, $$v)
-                              if ($$el.checked) {
-                                $$i < 0 &&
-                                  _vm.$set(
-                                    _vm.option_c_form,
-                                    "is_selected",
-                                    $$a.concat([$$v])
-                                  )
-                              } else {
-                                $$i > -1 &&
-                                  _vm.$set(
-                                    _vm.option_c_form,
-                                    "is_selected",
-                                    $$a.slice(0, $$i).concat($$a.slice($$i + 1))
-                                  )
-                              }
-                            } else {
-                              _vm.$set(_vm.option_c_form, "is_selected", $$c)
-                            }
-                          }
-                        }
-                      }),
-                      _vm._v(" "),
-                      _c("label", { staticClass: "black" }, [
-                        _vm._v("Is Selected")
-                      ]),
-                      _vm._v(" "),
-                      _c("has-error", {
-                        attrs: { form: _vm.option_c_form, field: "is_selected" }
                       })
                     ],
                     1
@@ -99697,6 +100198,51 @@ var render = function() {
                             form: _vm.quiz_form,
                             field: "number_of_questions"
                           }
+                        })
+                      ],
+                      1
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      { staticClass: "form-group" },
+                      [
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.quiz_form.minutes,
+                              expression: "quiz_form.minutes"
+                            }
+                          ],
+                          staticClass: "form-control",
+                          class: {
+                            "is-invalid": _vm.quiz_form.errors.has("minutes")
+                          },
+                          attrs: {
+                            id: "minutes",
+                            type: "number",
+                            name: "minutes",
+                            placeholder: "Minutes"
+                          },
+                          domProps: { value: _vm.quiz_form.minutes },
+                          on: {
+                            input: function($event) {
+                              if ($event.target.composing) {
+                                return
+                              }
+                              _vm.$set(
+                                _vm.quiz_form,
+                                "minutes",
+                                $event.target.value
+                              )
+                            }
+                          }
+                        }),
+                        _vm._v(" "),
+                        _c("has-error", {
+                          attrs: { form: _vm.quiz_form, field: "minutes" }
                         })
                       ],
                       1
@@ -100884,10 +101430,10 @@ render._withStripped = true
 
 /***/ }),
 
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Sessions.vue?vue&type=template&id=1b5960f0&":
-/*!***********************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Sessions.vue?vue&type=template&id=1b5960f0& ***!
-  \***********************************************************************************************************************************************************************************************************/
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Sessions.vue?vue&type=template&id=1b5960f0&scoped=true&":
+/*!***********************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Sessions.vue?vue&type=template&id=1b5960f0&scoped=true& ***!
+  \***********************************************************************************************************************************************************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -101491,7 +102037,7 @@ var render = function() {
                   attrs: { id: "title" }
                 }),
                 _vm._v(" "),
-                _c("b", [_vm._v("Assignments")]),
+                _c("h4", [_vm._v("Assignments")]),
                 _vm._v(" "),
                 _c(
                   "ul",
@@ -101517,7 +102063,7 @@ var render = function() {
                 _vm._v(" "),
                 _c("assign"),
                 _vm._v(" "),
-                _c("b", [_vm._v("Quizzes")]),
+                _c("h4", [_vm._v("Quizzes")]),
                 _vm._v(" "),
                 _c(
                   "ul",
@@ -101537,19 +102083,21 @@ var render = function() {
                         [_vm._v(_vm._s(quiz.title))]
                       ),
                       _vm._v(" "),
-                      _c(
-                        "a",
-                        {
-                          staticClass: "float-right red",
-                          attrs: { href: "#", id: "quiz" + quiz.id },
-                          on: {
-                            click: function($event) {
-                              return _vm.submitQuiz(quiz)
-                            }
-                          }
-                        },
-                        [_vm._v("Start Quiz")]
-                      )
+                      _vm.$gate.isStudent()
+                        ? _c(
+                            "a",
+                            {
+                              staticClass: "float-right red",
+                              attrs: { href: "#", id: "quiz" + quiz.id },
+                              on: {
+                                click: function($event) {
+                                  return _vm.submitQuiz(quiz)
+                                }
+                              }
+                            },
+                            [_vm._v("Start Quiz")]
+                          )
+                        : _vm._e()
                     ])
                   }),
                   0
@@ -101938,7 +102486,7 @@ var render = function() {
             _vm._v(" "),
             _c("div", { staticClass: "modal-body" }, [
               _c("h3", { staticClass: "profile-username text-center black" }, [
-                _vm._v(_vm._s(_vm.current_quiz.title))
+                _vm._v(_vm._s(_vm.current_quiz_detail + _vm.current_quiz.title))
               ]),
               _vm._v(" "),
               _c(
@@ -101991,23 +102539,68 @@ var render = function() {
       [
         _c("div", { staticClass: "modal-dialog modal-dialog-centered" }, [
           _c("div", { staticClass: "modal-content" }, [
-            _vm._m(7),
+            _c("div", { staticClass: "modal-header" }, [
+              _c(
+                "h2",
+                {
+                  staticClass: "modal-title black",
+                  attrs: { id: "submitQuizModalDetailLabel" }
+                },
+                [
+                  _vm._v(
+                    _vm._s(_vm.current_quiz_detail + _vm.current_quiz.title)
+                  )
+                ]
+              ),
+              _vm._v(" "),
+              _vm._m(7)
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "modal-header justify-content-center" }, [
+              _c("div", { staticClass: "base-timer" }, [
+                _c(
+                  "svg",
+                  {
+                    staticClass: "base-timer__svg",
+                    attrs: {
+                      viewBox: "0 0 100 100",
+                      xmlns: "http://www.w3.org/2000/svg"
+                    }
+                  },
+                  [
+                    _c("g", { staticClass: "base-timer__circle" }, [
+                      _c("circle", {
+                        staticClass: "base-timer__path-elapsed",
+                        attrs: { cx: "50", cy: "50", r: "45" }
+                      }),
+                      _vm._v(" "),
+                      _c("path", {
+                        staticClass: "base-timer__path-remaining",
+                        class: _vm.remainingPathColor,
+                        attrs: {
+                          "stroke-dasharray": _vm.circleDasharray,
+                          d:
+                            "\n                    M 50, 50\n                    m -45, 0\n                    a 45,45 0 1,0 90,0\n                    a 45,45 0 1,0 -90,0\n                  "
+                        }
+                      })
+                    ])
+                  ]
+                ),
+                _vm._v(" "),
+                _c("span", { staticClass: "base-timer__label" }, [
+                  _vm._v(_vm._s(_vm.formattedTimeLeft))
+                ])
+              ])
+            ]),
             _vm._v(" "),
             _c("div", { staticClass: "modal-body" }, [
-              _c("h3", { staticClass: "profile-username text-center black" }, [
-                _vm._v(_vm._s(_vm.current_quiz.title))
-              ]),
-              _vm._v(" "),
               _c(
                 "ol",
                 { staticClass: "list-group list-group-unbordered mb-3" },
                 _vm._l(_vm.current_quiz.questions, function(question) {
                   return _c("li", [
-                    _vm._v(
-                      "\n                " +
-                        _vm._s(question.content) +
-                        "\n                "
-                    ),
+                    _c("h4", [_c("b", [_vm._v(_vm._s(question.content))])]),
+                    _vm._v(" "),
                     _c(
                       "ol",
                       { attrs: { type: "A" } },
@@ -102191,29 +102784,18 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "modal-header" }, [
-      _c(
-        "h5",
-        {
-          staticClass: "modal-title black",
-          attrs: { id: "submitQuizModalDetailLabel" }
-        },
-        [_vm._v("Quiz")]
-      ),
-      _vm._v(" "),
-      _c(
-        "button",
-        {
-          staticClass: "close",
-          attrs: {
-            type: "button",
-            "data-dismiss": "modal",
-            "aria-label": "Close"
-          }
-        },
-        [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
-      )
-    ])
+    return _c(
+      "button",
+      {
+        staticClass: "close",
+        attrs: {
+          type: "button",
+          "data-dismiss": "modal",
+          "aria-label": "Close"
+        }
+      },
+      [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
+    )
   }
 ]
 render._withStripped = true
@@ -120789,9 +121371,11 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _Sessions_vue_vue_type_template_id_1b5960f0___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Sessions.vue?vue&type=template&id=1b5960f0& */ "./resources/js/components/Sessions.vue?vue&type=template&id=1b5960f0&");
+/* harmony import */ var _Sessions_vue_vue_type_template_id_1b5960f0_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Sessions.vue?vue&type=template&id=1b5960f0&scoped=true& */ "./resources/js/components/Sessions.vue?vue&type=template&id=1b5960f0&scoped=true&");
 /* harmony import */ var _Sessions_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Sessions.vue?vue&type=script&lang=js& */ "./resources/js/components/Sessions.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+/* empty/unused harmony star reexport *//* harmony import */ var _Sessions_vue_vue_type_style_index_0_id_1b5960f0_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Sessions.vue?vue&type=style&index=0&id=1b5960f0&scoped=true&lang=scss& */ "./resources/js/components/Sessions.vue?vue&type=style&index=0&id=1b5960f0&scoped=true&lang=scss&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
 
 
 
@@ -120799,13 +121383,13 @@ __webpack_require__.r(__webpack_exports__);
 
 /* normalize component */
 
-var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__["default"])(
   _Sessions_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _Sessions_vue_vue_type_template_id_1b5960f0___WEBPACK_IMPORTED_MODULE_0__["render"],
-  _Sessions_vue_vue_type_template_id_1b5960f0___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  _Sessions_vue_vue_type_template_id_1b5960f0_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _Sessions_vue_vue_type_template_id_1b5960f0_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
   false,
   null,
-  null,
+  "1b5960f0",
   null
   
 )
@@ -120831,19 +121415,35 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./resources/js/components/Sessions.vue?vue&type=template&id=1b5960f0&":
-/*!*****************************************************************************!*\
-  !*** ./resources/js/components/Sessions.vue?vue&type=template&id=1b5960f0& ***!
-  \*****************************************************************************/
+/***/ "./resources/js/components/Sessions.vue?vue&type=style&index=0&id=1b5960f0&scoped=true&lang=scss&":
+/*!********************************************************************************************************!*\
+  !*** ./resources/js/components/Sessions.vue?vue&type=style&index=0&id=1b5960f0&scoped=true&lang=scss& ***!
+  \********************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_sass_loader_dist_cjs_js_ref_7_3_node_modules_vue_loader_lib_index_js_vue_loader_options_Sessions_vue_vue_type_style_index_0_id_1b5960f0_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/style-loader!../../../node_modules/css-loader!../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../node_modules/postcss-loader/src??ref--7-2!../../../node_modules/sass-loader/dist/cjs.js??ref--7-3!../../../node_modules/vue-loader/lib??vue-loader-options!./Sessions.vue?vue&type=style&index=0&id=1b5960f0&scoped=true&lang=scss& */ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/sass-loader/dist/cjs.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Sessions.vue?vue&type=style&index=0&id=1b5960f0&scoped=true&lang=scss&");
+/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_sass_loader_dist_cjs_js_ref_7_3_node_modules_vue_loader_lib_index_js_vue_loader_options_Sessions_vue_vue_type_style_index_0_id_1b5960f0_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_index_js_node_modules_css_loader_index_js_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_sass_loader_dist_cjs_js_ref_7_3_node_modules_vue_loader_lib_index_js_vue_loader_options_Sessions_vue_vue_type_style_index_0_id_1b5960f0_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0__);
+/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _node_modules_style_loader_index_js_node_modules_css_loader_index_js_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_sass_loader_dist_cjs_js_ref_7_3_node_modules_vue_loader_lib_index_js_vue_loader_options_Sessions_vue_vue_type_style_index_0_id_1b5960f0_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _node_modules_style_loader_index_js_node_modules_css_loader_index_js_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_sass_loader_dist_cjs_js_ref_7_3_node_modules_vue_loader_lib_index_js_vue_loader_options_Sessions_vue_vue_type_style_index_0_id_1b5960f0_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0__[key]; }) }(__WEBPACK_IMPORT_KEY__));
+ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_style_loader_index_js_node_modules_css_loader_index_js_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_sass_loader_dist_cjs_js_ref_7_3_node_modules_vue_loader_lib_index_js_vue_loader_options_Sessions_vue_vue_type_style_index_0_id_1b5960f0_scoped_true_lang_scss___WEBPACK_IMPORTED_MODULE_0___default.a); 
+
+/***/ }),
+
+/***/ "./resources/js/components/Sessions.vue?vue&type=template&id=1b5960f0&scoped=true&":
+/*!*****************************************************************************************!*\
+  !*** ./resources/js/components/Sessions.vue?vue&type=template&id=1b5960f0&scoped=true& ***!
+  \*****************************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Sessions_vue_vue_type_template_id_1b5960f0___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./Sessions.vue?vue&type=template&id=1b5960f0& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Sessions.vue?vue&type=template&id=1b5960f0&");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Sessions_vue_vue_type_template_id_1b5960f0___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Sessions_vue_vue_type_template_id_1b5960f0_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./Sessions.vue?vue&type=template&id=1b5960f0&scoped=true& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Sessions.vue?vue&type=template&id=1b5960f0&scoped=true&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Sessions_vue_vue_type_template_id_1b5960f0_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Sessions_vue_vue_type_template_id_1b5960f0___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Sessions_vue_vue_type_template_id_1b5960f0_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 

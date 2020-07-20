@@ -9,7 +9,7 @@ class Quiz extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = ['session_id', 'title', 'marks', 'number_of_questions'];
+    protected $fillable = ['session_id', 'title', 'marks', 'number_of_questions', 'minutes'];
 
     protected $dates = ['created_at', 'updated_at', 'deleted_at'];
 

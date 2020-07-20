@@ -19,6 +19,7 @@ class CreateQuizzesTable extends Migration
             $table->string('title');
             $table->integer('marks');
             $table->integer('number_of_questions')->default(10);
+            $table->integer('minutes')->default(2);
             $table->timestamps();
             $table->softDeletes()->nullable();
         });

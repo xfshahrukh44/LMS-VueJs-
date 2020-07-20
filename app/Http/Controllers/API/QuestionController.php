@@ -30,7 +30,7 @@ class QuestionController extends Controller
     {
         $this->validate($request,[ 
             'quiz_id' => 'required|integer',
-            'content' => 'required|string|min:10',
+            'content' => 'required|string',
         ]);
         $question = Question::create($request->all());
         return $question->id;

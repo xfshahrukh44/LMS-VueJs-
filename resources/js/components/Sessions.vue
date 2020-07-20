@@ -135,7 +135,7 @@
                 <h3 class="profile-username text-center" id="title"></h3>
 
                 <!-- //children -->
-                <b>Assignments</b>
+                <h4>Assignments</h4>
                 <ul id="assignments">
                   <li v-for="assignment in session_assignments">
                     <a href="#" @click="openAssignment(assignment)">{{assignment.title}}</a>
@@ -143,11 +143,11 @@
                 </ul>
                 <assign></assign>
 
-                <b>Quizzes</b>
+                <h4>Quizzes</h4>
                 <ul id="quizzes">
                   <li v-for="quiz in session_quizzes">
                     <a href="#" @click="openQuiz(quiz)">{{quiz.title}}</a>
-                    <a class="float-right red" href="#" @click="submitQuiz(quiz)" :id="'quiz' + quiz.id">Start Quiz</a>
+                    <a class="float-right red" href="#" @click="submitQuiz(quiz)" :id="'quiz' + quiz.id" v-if="$gate.isStudent()">Start Quiz</a>
                   </li>     
                 </ul>
 
@@ -220,7 +220,7 @@
               </div>
               <div class="modal-body">
 
-                <h3 class="profile-username text-center black">{{current_quiz.title}}</h3>
+                <h3 class="profile-username text-center black">{{current_quiz_detail + current_quiz.title}}</h3>
 
                 <ul class="list-group list-group-unbordered mb-3">
                   <li v-for="question in current_quiz.questions">
@@ -248,18 +248,41 @@
           <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
               <div class="modal-header">
-                <h5 class="modal-title black" id="submitQuizModalDetailLabel">Quiz</h5>
+                <h2 class="modal-title black" id="submitQuizModalDetailLabel">{{current_quiz_detail + current_quiz.title}}</h2>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                   <span aria-hidden="true">&times;</span>
                 </button>
               </div>
-              <div class="modal-body">
+              <div class="modal-header justify-content-center">
+                
 
-                <h3 class="profile-username text-center black">{{current_quiz.title}}</h3>
+              <div class="base-timer">
+                <svg class="base-timer__svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                  <g class="base-timer__circle">
+                    <circle class="base-timer__path-elapsed" cx="50" cy="50" r="45"></circle>
+                    <path
+                      :stroke-dasharray="circleDasharray"
+                      class="base-timer__path-remaining"
+                      :class="remainingPathColor"
+                      d="
+                        M 50, 50
+                        m -45, 0
+                        a 45,45 0 1,0 90,0
+                        a 45,45 0 1,0 -90,0
+                      "
+                    ></path>
+                  </g>
+                </svg>
+                <span class="base-timer__label">{{ formattedTimeLeft }}</span>
+              </div>         
+
+
+              </div>
+              <div class="modal-body">
 
                 <ol class="list-group list-group-unbordered mb-3">
                   <li v-for="question in current_quiz.questions">
-                    {{question.content}}
+                    <h4><b>{{question.content}}</b></h4>
                     <ol type="A">
                       <li v-for="option in question.options" action="">
                         <input type="radio" :id="option.id" :name="question.id">
@@ -283,9 +306,39 @@
 </template>
 
 <script>
+
+    // Timer Code Variables
+
+    const FULL_DASH_ARRAY = 283;
+    var WARNING_THRESHOLD = 0;
+    var ALERT_THRESHOLD = 0;
+
+    var COLOR_CODES = {
+      info: {
+        color: "green"
+      },
+      warning: {
+        color: "orange",
+        threshold: WARNING_THRESHOLD
+      },
+      alert: {
+        color: "red",
+        threshold: ALERT_THRESHOLD
+      }
+    };
+
+    var TIME_LIMIT = 0;
+
+    // Timer Code Variables End
+
     export default {
         data(){
           return{
+            timeLimit: 0,
+            timePassed: 0,
+            timePassed: 0,
+            timerInterval: null,
+            trigger:0,
             search:'',
             editmode: false,
             sections:{},
@@ -298,6 +351,7 @@
             session_assignments:{},
             session_quizzes:{},
             current_quiz: {},
+            current_quiz_detail: '',
             assignment_form : new Form(
               {
                 id: '',
@@ -404,11 +458,21 @@
           openQuiz(quiz)
           {
             this.current_quiz = quiz;
+            this.current_quiz_detail = quiz.session.section.classroom.title + quiz.session.section.title + ' - ' + quiz.session.course.title + ' | ' + quiz.session.teacher.name + " | ";
             $('#quizModalDetail').modal('show');
           },
           submitQuiz(quiz)
           {
             this.current_quiz = quiz;
+
+            //TIMER WORK
+            TIME_LIMIT = this.current_quiz.minutes * 60;
+            COLOR_CODES.warning.threshold = TIME_LIMIT * .3;
+            COLOR_CODES.alert.threshold = TIME_LIMIT * .1;
+            console.log(WARNING_THRESHOLD, ALERT_THRESHOLD);
+
+            this.current_quiz_detail = quiz.session.section.classroom.title + quiz.session.section.title + ' - ' + quiz.session.course.title + ' | ' + quiz.session.teacher.name + " | ";
+            console.log(quiz.session.course)
             axios.get('api/checkquizsubmission?quiz_id=' + quiz.id)
             .then(({data}) => {
               if(data == 0)
@@ -422,6 +486,10 @@
               else
               {
                 $('#submitQuizModalDetail').modal('show');
+                this.trigger++;
+                if(this.trigger == 1){
+                  this.startTimer();
+                }
               }
             })
           },
@@ -534,7 +602,62 @@
           },
           searchit(){
             Fire.$emit('searching');
-      }
+          },
+          onTimesUp() {
+            clearInterval(this.timerInterval);
+            this.markQuiz(this.current_quiz);
+          },
+          startTimer() {
+            this.timerInterval = setInterval(() => (this.timePassed += 1), 1000);
+          },
+        },
+        computed: {
+          circleDasharray() {
+            return `${(this.timeFraction * FULL_DASH_ARRAY).toFixed(0)} 283`;
+          },
+
+          formattedTimeLeft() {
+            const timeLeft = this.timeLeft;
+            const minutes = Math.floor(timeLeft / 60);
+            let seconds = timeLeft % 60;
+
+            if (seconds < 10) {
+                seconds = `0${seconds}`;
+            }
+
+            return `${minutes}:${seconds}`;
+          },
+
+          timeLeft() {
+            return TIME_LIMIT - this.timePassed;
+          },
+
+          timeFraction() {
+            const rawTimeFraction = this.timeLeft / TIME_LIMIT;
+            return rawTimeFraction - (1 / TIME_LIMIT) * (1 - rawTimeFraction);
+          },
+
+          remainingPathColor() {
+            const { alert, warning, info } = COLOR_CODES;
+
+            if (this.timeLeft <= alert.threshold) {
+                return alert.color;
+            } else if (this.timeLeft <= warning.threshold) {
+                return warning.color;
+            } else {
+                return info.color;
+            }
+          }
+        },
+        watch: {
+            timeLeft(newValue) {
+                if (newValue === 0) {
+                    this.onTimesUp();
+                }
+            },
+            testProp:function(newVal,oldVal){
+                this.startTimer();
+            }
         },
         mounted() {
             this.loadSession();
@@ -549,3 +672,59 @@
         }
     };
 </script>
+
+<style scoped lang="scss">
+.base-timer {
+  position: relative;
+  width: 200px;
+  height: 200px;
+
+  &__svg {
+    transform: scaleX(-1);
+  }
+
+  &__circle {
+    fill: none;
+    stroke: none;
+  }
+
+  &__path-elapsed {
+    stroke-width: 5px;
+    stroke: white;
+  }
+
+  &__path-remaining {
+    stroke-width: 5px;
+    stroke-linecap: round;
+    transform: rotate(90deg);
+    transform-origin: center;
+    transition: 1s linear all;
+    fill-rule: nonzero;
+    stroke: currentColor;
+
+    &.green {
+      color: rgb(65, 184, 131);
+    }
+
+    &.orange {
+      color: orange;
+    }
+
+    &.red {
+      color: red;
+    }
+  }
+
+  &__label {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    top: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+  }
+}
+</style>
+
