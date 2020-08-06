@@ -22,6 +22,7 @@ Vue.component('quiz',require('./components/Quiz.vue').default)
 Vue.component('question',require('./components/Question.vue').default)
 Vue.component('opt',require('./components/Option.vue').default)
 Vue.component('assign',require('./components/Assignments.vue').default)
+Vue.component('lecture',require('./components/Lectures.vue').default)
 
 window.Swal = Swal;
 const Toast = Swal.mixin({
@@ -84,7 +85,9 @@ let routes = [
   { path: '/sessions', component: require('./components/Sessions.vue').default },
   { path: '/attendances', component: require('./components/Attendences.vue').default },
   { path: '/assignments', component: require('./components/Assignments.vue').default },
-  { path: '/submissions', component: require('./components/Submissions.vue').default }
+  { path: '/submissions', component: require('./components/Submissions.vue').default },
+  { path: '/lectures', component: require('./components/Lectures.vue').default},
+  { path: '/lectureIndex', component: require('./components/LectureIndex.vue').default, name: 'lectureIndex'},
 ]
 
 const router = new VueRouter({

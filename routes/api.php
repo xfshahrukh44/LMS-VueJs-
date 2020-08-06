@@ -32,6 +32,7 @@ Route::apiResources(['quiz'=>'API\QuizController']);
 Route::apiResources(['quizsubmission'=>'API\QuizSubmissionController']);
 Route::apiResources(['question'=>'API\QuestionController']);
 Route::apiResources(['option'=>'API\OptionController']);
+Route::apiResources(['lecture'=>'API\LectureController']);
 
 //Assignment Download
 Route::get('dloadasgn', 'API\AssignmentController@download');

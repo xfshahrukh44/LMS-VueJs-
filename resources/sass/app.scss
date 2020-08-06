@@ -34,3 +34,19 @@ $fa-font-path: "../webfonts";
 #assignmentModalDetail li span{
 	cursor: pointer;
 }
+th{
+	text-align: center;
+}
+td{
+	text-align: center;
+}
+input[type='file']{
+	outline: none;
+	border: none;
+}
+#cardFooter{
+	background-color: transparent;
+	border: none;
+	outline: none;
+}
+

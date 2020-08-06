@@ -13,9 +13,9 @@
                   </button>
                 <div class="card-tools mt-2">
                   <div class="input-group input-group-sm">
-                    <input v-model="search" type="text" name="table_search" class="form-control float-right" id="table_search" placeholder="Search" @keyup.enter="searchit">
+                    <input v-model="search" type="text" name="table_search" class="form-control float-right" id="table_search" placeholder="Search">
                     <div class="input-group-append ml-2">
-                      <button class="btn btn-primary" id="s_btn" @click="searchit">
+                      <button class="btn btn-primary" id="s_btn">
                         <i class="fas fa-search"></i>
                       </button>
                     </div>
@@ -37,7 +37,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-if="users.data.length > 0" v-for="user in users.data">
+                    <tr v-if="users.data.length > 0" v-for="user in filteredList">
                       <td>{{user.id}}</td>
                       <td>{{user.name}}</td>
                       <td>{{user.email}}</td>
@@ -77,16 +77,16 @@
                   <span aria-hidden="true">&times;</span>
                 </button>
               </div>
-              <form @submit.prevent="editmode ? updateUser() : createUser()">
+              <form @submit.prevent="editmode ? updateUser() : createUser()" id="userForm">
               <div class="modal-body">
                 <div class="form-group">
                   <input v-model="form.name" id="name" type="text" name="name" placeholder="Name"
-                    class="form-control" :class="{ 'is-invalid': form.errors.has('name') }">
+                    class="form-control" :class="{ 'is-invalid': form.errors.has('name') }" required>
                   <has-error :form="form" field="name"></has-error>
                 </div>
                 <div class="form-group">
                   <input v-model="form.email" id="email" type="email" name="email" placeholder="Email" 
-                    class="form-control" :class="{ 'is-invalid': form.errors.has('email') }">
+                    class="form-control" :class="{ 'is-invalid': form.errors.has('email') }" required>
                   <has-error :form="form" field="email"></has-error>
                 </div>
                 <div class="form-group">
@@ -150,7 +150,7 @@
           return{
             search:'',
             editmode: false,
-            users:{},
+            users:{data:[]},
             form: new Form({
               id:       '',
               name:     '',
@@ -169,6 +169,7 @@
             });
           },
           AddUserModal(){
+
             this.form.reset();
             this.editmode = false;
             $('#userModal').modal('show');
@@ -237,9 +238,16 @@
             })
             .catch(()=>{});
           },
-          searchit(){
-            Fire.$emit('searching');
-      }
+        },
+        computed:{
+          filteredList:function(){
+            return this.users.data.filter(user =>{
+              return user.name.toLowerCase().includes(this.search.toLowerCase()) ||
+              user.email.toLowerCase().includes(this.search.toLowerCase()) ||
+              user.type.toLowerCase().includes(this.search.toLowerCase()) ||
+              Vue.filter('myDate')(user.created_at).toLowerCase().includes(this.search.toLowerCase())
+            })
+          }
         },
         mounted() {
             this.loadUser();

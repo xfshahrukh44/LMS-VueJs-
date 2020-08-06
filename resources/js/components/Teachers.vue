@@ -1,5 +1,5 @@
 <template>
-    <div class="container">
+    <div class="container" v-if="$gate.isTeacher() || $gate.isAdmin()">
         <div class="row mt-3 ml-1">
             <h2>Teachers Details</h2>
         </div>
@@ -13,9 +13,9 @@
                   </button>
                 <div class="card-tools mt-2">
                   <div class="input-group input-group-sm">
-                    <input v-model="search" type="text" name="table_search" class="form-control float-right" id="table_search" placeholder="Search" @keyup.enter="searchit">
+                    <input v-model="search" type="text" name="table_search" class="form-control float-right" id="table_search" placeholder="Search">
                     <div class="input-group-append ml-2">
-                      <button class="btn btn-primary" id="s_btn" @click="searchit">
+                      <button class="btn btn-primary" id="s_btn">
                         <i class="fas fa-search"></i>
                       </button>
                     </div>
@@ -37,7 +37,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-if="teachers.data.length > 0" v-for="teacher in teachers.data">
+                    <tr v-if="teachers.data.length > 0" v-for="teacher in filteredList">
                       <td>{{teacher.id}}</td>
                       <td>{{teacher.user.name}}</td>
                       <td>{{teacher.name}}</td>
@@ -148,7 +148,7 @@
             search:'',
             editmode: false,
             users:{},
-            teachers:{},
+            teachers:{data: []},
             sections:{},
             form: new Form({
               id:         '',
@@ -240,9 +240,16 @@
             })
             .catch(()=>{});
           },
-          searchit(){
-            Fire.$emit('searching');
-      }
+        },
+        computed:{
+          filteredList:function(){
+            return this.teachers.data.filter(teacher =>{
+              return teacher.user.name.toLowerCase().includes(this.search.toLowerCase()) ||
+              teacher.name.toLowerCase().includes(this.search.toLowerCase()) ||
+              teacher.contact.toLowerCase().includes(this.search.toLowerCase()) ||
+              teacher.address.toLowerCase().includes(this.search.toLowerCase())
+            })
+          }
         },
         mounted() {
             this.loadUser();

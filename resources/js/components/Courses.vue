@@ -13,9 +13,9 @@
                   </button>
                 <div class="card-tools mt-2">
                   <div class="input-group input-group-sm">
-                    <input v-model="search" type="text" name="table_search" class="form-control float-right" id="table_search" placeholder="Search" @keyup.enter="searchit">
+                    <input v-model="search" type="text" name="table_search" class="form-control float-right" id="table_search" placeholder="Search">
                     <div class="input-group-append ml-2">
-                      <button class="btn btn-primary" id="s_btn" @click="searchit">
+                      <button class="btn btn-primary" id="s_btn">
                         <i class="fas fa-search"></i>
                       </button>
                     </div>
@@ -35,7 +35,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-if="courses.data.length > 0" v-for="course in courses.data">
+                    <tr v-if="courses.data.length > 0" v-for="course in filteredList">
                       <td>{{course.id}}</td>
                       <td>{{course.title}}</td>
                       <td>{{course.classroom.title}}</td>
@@ -96,7 +96,6 @@
             </div>
           </div>
         </div>
-
         <div class="modal fade" id="courseModalDetail" tabindex="-1" role="dialog" aria-labelledby="courseModalDetailLabel" aria-hidden="true">
           <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -130,7 +129,7 @@
           return{
             search:'',
             editmode: false,
-            courses:{},
+            courses:{data: []},
             classrooms:{},
             form: new Form({
               id:           '',
@@ -219,9 +218,14 @@
             })
             .catch(()=>{});
           },
-          searchit(){
-            Fire.$emit('searching');
-      }
+        },
+        computed:{
+          filteredList:function(){
+            return this.courses.data.filter(course =>{
+              return course.title.toLowerCase().includes(this.search.toLowerCase()) ||
+              course.classroom.title.toLowerCase().includes(this.search.toLowerCase())
+            })
+          }
         },
         mounted() {
             this.loadCourse();

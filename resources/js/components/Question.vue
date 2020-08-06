@@ -141,6 +141,7 @@
                     this.$Progress.start();
                     $('#questionModal').modal('hide');
                     $('#sessionModalDetail').modal('hide');
+                    this.$parent.$parent.loadSession();
                     this.$Progress.finish();
                   }              
                 })

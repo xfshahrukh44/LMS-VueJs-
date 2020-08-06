@@ -1,6 +1,10 @@
 <template>
-    <div class="container">
-        <a data-toggle = "modal" data-target = "#quizModal">Create Quiz</a>
+    <div>
+        <a data-toggle = "modal" data-target = "#quizModal">
+            <i class="material-icons white">spellcheck</i>
+            <br>
+            <b>Quiz</b>
+        </a>
         <!-- CREATE/EDIT VIEW -->
         <div class="modal fade" id="quizModal" tabindex="-1" role="dialog" aria-labelledby="quizModalLabel" aria-hidden="true">
           <div class="modal-dialog modal-dialog-centered">
@@ -56,8 +60,8 @@
     export default {
         data(){
             return{
-                current_quiz: {},
-                quiz_form: new Form(
+              current_quiz: {},
+              quiz_form: new Form(
                     {
                         id: '',
                         session_id: '',
@@ -85,7 +89,6 @@
                 // });
                 this.$Progress.finish();
                 this.current_quiz_id =  data;
-
                 $('#questionModal').modal('show');
 
                 })

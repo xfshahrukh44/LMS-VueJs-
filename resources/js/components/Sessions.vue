@@ -1,71 +1,52 @@
 <template>
     <div class="container">
         <div class="row mt-3 ml-1">
-            <h2>Sessions Details</h2>
+            <h2>Your Classes</h2>
         </div>
+
         <!-- INDEX VIEW -->
         <div class="row">
-          <div class="col-12">
-            <div class="card">
-              <div class="card-header">
-                <h3 class="card-title mt-2"></h3>
-                  <button class="btn btn-success xs" id="add_session" @click="AddSessionModal">
-                      <i class="fas fa-user-plus fa-lg"></i>
-                  </button>
-                <div class="card-tools mt-2">
-                  <div class="input-group input-group-sm">
-                    <input v-model="search" type="text" name="table_search" class="form-control float-right" id="table_search" placeholder="Search" @keyup.enter="searchit">
-                    <div class="input-group-append ml-2">
-                      <button class="btn btn-primary" id="s_btn" @click="searchit">
-                        <i class="fas fa-search"></i>
-                      </button>
-                    </div>
+          <div class="card card-primary col-md-3 ml-3" v-if="sessions.data.length > 0" v-for="session in filteredList">
+              <div class="card-body box-profile">
 
-                  </div>
-                </div>
-              </div>
-              <!-- /.card-header -->
-              <div class="card-body table-responsive p-0">
-                <table class="table table-hover text-nowrap">
-                  <thead>
-                    <tr>
-                      <th>ID</th>
-                      <th>Section Name</th>
-                      <th>Course Name</th>
-                      <th>Teaher Name</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr v-if="sessions.data.length > 0" v-for="session in sessions.data">
-                      <td>{{session.id}}</td>
-                      <td>{{session.section.classroom.title + ' - ' + session.section.title}}</td>
-                      <td>{{session.course.classroom.title + ' - ' + session.course.title}}</td>
-                      <td>{{session.teacher.name}}</td>
-                      <td>
-                          <a href="#" @click="DetailSessionModal(session)">
-                            <i class="fas fa-eye blue ml-1"></i>
-                          </a>
-                          <a href="#" @click="EditSessionModal(session)">
-                            <i class="fas fa-edit blue ml-1"></i>
-                          </a>
-                          <a href="#" @click="deleteSession(session.id)"><i class="fas fa-trash red ml-1"></i></a>
-                      </td>
-                    </tr>
-                    <tr v-if="sessions.data.length == 0">
-                      <td colspan="7" style="text-align:center;">No Data Available</td>
-                    </tr>
-                  </tbody>
-                </table>
+                <h1 class="profile-username text-center">{{session.course.title}}</h1>
+
+                <p class="text-muted text-center">{{session.teacher.name}}</p>
+
+                <!-- //children -->
+                <h5>Assignments</h5>
+                <ul id="assignments">
+                  <li v-for="assignment in session.assignments">
+                    <a href="#" @click="openAssignment(assignment)">{{assignment.title}}</a>
+                  </li>
+                </ul>
+                <assign></assign>
+
+                <h5>Quizzes</h5>
+                <ul id="quizzes">
+                  <li v-for="quiz in session.quizzes">
+                    <a href="#" @click="openQuiz(quiz)">{{quiz.title}}</a>
+                    <a class="float-right red" href="#" @click="submitQuiz(quiz)" :id="'quiz' + quiz.id" v-if="$gate.isStudent()">Start Quiz</a>
+                  </li>     
+                </ul>
+
+                <!-- Buttons -->
+                
+              
               </div>
               <!-- /.card-body -->
-              <div class="card-footer">
-                <pagination :data="sessions" @pagination-change-page="getResults"></pagination>
+              <div class="card-footer" id="cardFooter">
+                <a id="createButton" class="btn btn-primary btn-block mb-1" href="#" @click="DetailSessionModal(session)" v-if="$gate.isAdmin() || $gate.isTeacher()">Create New...</a>
+                <a class="btn btn-primary btn-block mb-1" @click="updateSessionId(session.id)">
+                  <div class="row justify-content-center white">
+                    <i class="material-icons white mr-1">menu_book</i>
+                    <b>View Lectures</b>
+                  </div>
+                </a>
               </div>
             </div>
-            <!-- /.card -->
-          </div>
         </div>
+
         <!-- CREATE/EDIT VIEW -->
         <div class="modal fade" id="sessionModal" tabindex="-1" role="dialog" aria-labelledby="sessionModalLabel" aria-hidden="true">
           <div class="modal-dialog modal-dialog-centered">
@@ -120,39 +101,23 @@
           </div>
         </div>
 
-        <!-- DETAIL VIEW -->
+        <!-- THREE BUTTONS -->
         <div class="modal fade" id="sessionModalDetail" tabindex="-1" role="dialog" aria-labelledby="sessionModalDetailLabel" aria-hidden="true">
           <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="sessionModalDetailLabel">Session Detail</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div class="modal-body">
+              <div class="modal-body row mt-2">
 
-                <h3 class="profile-username text-center" id="title"></h3>
-
-                <!-- //children -->
-                <h4>Assignments</h4>
-                <ul id="assignments">
-                  <li v-for="assignment in session_assignments">
-                    <a href="#" @click="openAssignment(assignment)">{{assignment.title}}</a>
-                  </li>
-                </ul>
-                <assign></assign>
-
-                <h4>Quizzes</h4>
-                <ul id="quizzes">
-                  <li v-for="quiz in session_quizzes">
-                    <a href="#" @click="openQuiz(quiz)">{{quiz.title}}</a>
-                    <a class="float-right red" href="#" @click="submitQuiz(quiz)" :id="'quiz' + quiz.id" v-if="$gate.isStudent()">Start Quiz</a>
-                  </li>     
-                </ul>
-
-                <a href="#" @click="AddAssignmentModal()" class="btn btn-primary btn-block mb-1" v-if="$gate.isAdmin()"><b>Create Assignment</b></a>
-                <quiz class="btn btn-primary btn-block" v-if="$gate.isAdmin()"></quiz>
+                <assign></assign>   
+                <!-- Buttons -->
+                <a href="#" @click="AddAssignmentModal()" class="btn btn-primary btn-app col-sm-4" v-if="$gate.isAdmin() || $gate.isTeacher()">
+                  <!-- <div class="row justify-content-center"> -->
+                    <i class="material-icons white">assignment</i>
+                    <br>
+                    <b>Assignment</b>
+                  <!-- </div> -->
+                </a>
+                <quiz class="btn btn-primary btn-app col-sm-3" v-if="$gate.isAdmin() || $gate.isTeacher()"></quiz>
+                <lecture class="btn btn-primary btn-app col-sm-4"></lecture>
               <!-- /.card-body -->
               </div>
             </div>
@@ -249,9 +214,6 @@
             <div class="modal-content">
               <div class="modal-header">
                 <h2 class="modal-title black" id="submitQuizModalDetailLabel">{{current_quiz_detail + current_quiz.title}}</h2>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
               </div>
               <div class="modal-header justify-content-center">
                 
@@ -344,7 +306,7 @@
             sections:{},
             courses:{},
             teachers:{},
-            sessions:{},
+            sessions:{data: []},
             assign_name: '',
             assign_type: '',
             current_session_id:'',
@@ -409,40 +371,13 @@
           },
           DetailSessionModal(session)
           {
-            $('#sessionModalDetail #title').text(session.section.classroom.title + session.section.title + ' - ' + session.course.title);
-            this.session_assignments = session.assignments;
-            this.session_quizzes = session.quizzes;
-
-            //children
-            // $('#sessionModalDetail #assignments li').remove();
-            
-            // for(var i = 0; i < session.assignments.length; i++ ){
-            // $('#sessionModalDetail #assignments').append('<li>'+session.assignments[i].title+'</li>');
-            // }
-            
-            // $('#sessionModalDetail #quizzes li').remove();
-            // for(var i = 0; i < session.quizzes.length; i++ ){
-            // $('#sessionModalDetail #quizzes').append('<li>'+session.quizzes[i].title+'</li>');
-            // }
-            var count = 0;
-            for(var i = 0; i < this.session_quizzes.length; i++)
-            {
-              axios.get('api/checkquizsubmission?quiz_id=' +  session.quizzes[i].id)
-              .then(({data}) => 
-              {
-                console.log(count);
-                if(data == 0)
-                {
-                  $('#quiz' + session.quizzes[count++].id ).hide();
-                }
-                else
-                {
-                  $('#quiz' + session.quizzes[count++].id ).show();
-                }
-              })
-            }
             this.current_session_id = session.id;
             $('#sessionModalDetail').modal('show');
+          },
+          updateSessionId(id){
+            this.current_session_id = id;
+            // $('#sessionModalDetail').modal('hide');
+            this.$router.push({name: 'lectureIndex', params: {session_id: this.current_session_id}});
           },
           openAssignment(assignment){
             this.assign_name = assignment.file;
@@ -463,6 +398,10 @@
           },
           submitQuiz(quiz)
           {
+            $(window).bind("beforeunload",function(event) {
+              return "You have some unsaved changes";
+            });
+
             this.current_quiz = quiz;
 
             //TIMER WORK
@@ -485,6 +424,7 @@
               }
               else
               {
+                $('#submitQuizModalDetail').modal({backdrop: 'static', keyboard: false});
                 $('#submitQuizModalDetail').modal('show');
                 this.trigger++;
                 if(this.trigger == 1){
@@ -582,6 +522,7 @@
                 icon: 'success',
                 title: 'Assignment Created Successfully'
               });
+              this.loadSession();
               this.$Progress.finish();
             })
             .catch(()=>{});
@@ -600,9 +541,6 @@
             })
             .catch(()=>{});
           },
-          searchit(){
-            Fire.$emit('searching');
-          },
           onTimesUp() {
             clearInterval(this.timerInterval);
             this.markQuiz(this.current_quiz);
@@ -612,6 +550,14 @@
           },
         },
         computed: {
+          filteredList:function(){
+            return this.sessions.data.filter(session =>{
+              return (session.section.classroom.title + session.section.title).toLowerCase().includes(this.search.toLowerCase()) ||
+              (session.section.classroom.title + '-' + session.course.title).toLowerCase().includes(this.search.toLowerCase()) ||
+              session.teacher.name.toLowerCase().includes(this.search.toLowerCase())
+            })
+          },
+
           circleDasharray() {
             return `${(this.timeFraction * FULL_DASH_ARRAY).toFixed(0)} 283`;
           },
@@ -672,6 +618,7 @@
         }
     };
 </script>
+
 
 <style scoped lang="scss">
 .base-timer {

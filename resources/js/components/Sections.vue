@@ -13,9 +13,9 @@
                   </button>
                 <div class="card-tools mt-2">
                   <div class="input-group input-group-sm">
-                    <input v-model="search" type="text" name="table_search" class="form-control float-right" id="table_search" placeholder="Search" @keyup.enter="searchit">
+                    <input v-model="search" type="text" name="table_search" class="form-control float-right" id="table_search" placeholder="Search">
                     <div class="input-group-append ml-2">
-                      <button class="btn btn-primary" id="s_btn" @click="searchit">
+                      <button class="btn btn-primary" id="s_btn">
                         <i class="fas fa-search"></i>
                       </button>
                     </div>
@@ -35,7 +35,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-if="sections.data.length > 0" v-for="section in sections.data">
+                    <tr v-if="sections.data.length > 0" v-for="section in filteredList">
                       <td>{{section.id}}</td>
                       <td>{{section.title}}</td>
                       <td>{{section.classroom.title}}</td>
@@ -96,7 +96,6 @@
             </div>
           </div>
         </div>
-
         <div class="modal fade" id="sectionModalDetail" tabindex="-1" role="dialog" aria-labelledby="sectionModalDetailLabel" aria-hidden="true">
           <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -139,7 +138,7 @@
           return{
             search:'',
             editmode: false,
-            sections:{},
+            sections:{data: []},
             classrooms:{},
             form: new Form({
               id:           '',
@@ -239,9 +238,14 @@
             })
             .catch(()=>{});
           },
-          searchit(){
-            Fire.$emit('searching');
-      }
+        },
+        computed:{
+          filteredList:function(){
+            return this.sections.data.filter(section =>{
+              return section.title.toLowerCase().includes(this.search.toLowerCase()) ||
+              section.classroom.title.toLowerCase().includes(this.search.toLowerCase())
+            })
+          }
         },
         mounted() {
             this.loadSection();

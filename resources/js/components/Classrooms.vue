@@ -3,6 +3,7 @@
         <div class="row mt-3 ml-1">
             <h2>Classrooms Details</h2>
         </div>
+        <!-- INDEX VIEW -->
         <div class="row">
           <div class="col-12">
             <div class="card">
@@ -63,7 +64,8 @@
             <!-- /.card -->
           </div>
         </div>
-        <!-- index view -->
+        
+        <!-- CREATE/EDIT VIEW -->
         <div class="modal fade" id="classroomModal" tabindex="-1" role="dialog" aria-labelledby="classroomModalLabel" aria-hidden="true">
           <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">

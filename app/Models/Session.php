@@ -37,4 +37,9 @@ class Session extends Model
     {
         return $this->hasMany('App\Models\Quiz');
     }
+
+    public function lectures()
+    {
+        return $this->hasMany('App\Models\Lecture');
+    }
 }

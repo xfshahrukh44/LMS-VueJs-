@@ -13,9 +13,9 @@
                   </button>
                 <div class="card-tools mt-2">
                   <div class="input-group input-group-sm">
-                    <input v-model="search" type="text" name="table_search" class="form-control float-right" id="table_search" placeholder="Search" @keyup.enter="searchit">
+                    <input v-model="search" type="text" name="table_search" class="form-control float-right" id="table_search" placeholder="Search">
                     <div class="input-group-append ml-2">
-                      <button class="btn btn-primary" id="s_btn" @click="searchit">
+                      <button class="btn btn-primary" id="s_btn">
                         <i class="fas fa-search"></i>
                       </button>
                     </div>
@@ -38,13 +38,13 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-if="students.data.length > 0" v-for="student in students.data">
+                    <tr v-if="students.data.length > 0" v-for="student in filteredList">
                       <td>{{student.id}}</td>
                       <td>{{student.user.name}}</td>
                       <td>{{student.name}}</td>
                       <td>{{student.contact}}</td>
                       <td>{{student.address}}</td>
-                      <td>{{student.section.classroom.title +" - "+ student.section.title}}</td>
+                      <td>{{student.section.classroom.title + student.section.title}}</td>
                       <td>
                           <a href="#" @click="DetailStudentModal(student)">
                             <i class="fas fa-eye blue ml-1"></i>
@@ -159,7 +159,7 @@
             search:'',
             editmode: false,
             users:{},
-            students:{},
+            students:{data: []},
             sections:{},
             form: new Form({
               id:         '',
@@ -256,9 +256,17 @@
             })
             .catch(()=>{});
           },
-          searchit(){
-            Fire.$emit('searching');
-      }
+        },
+        computed:{
+          filteredList:function(){
+            return this.students.data.filter(student =>{
+              return student.user.name.toLowerCase().includes(this.search.toLowerCase()) ||
+              student.name.toLowerCase().includes(this.search.toLowerCase()) ||
+              student.contact.toLowerCase().includes(this.search.toLowerCase()) ||
+              student.address.toLowerCase().includes(this.search.toLowerCase()) ||
+              (student.section.classroom.title + student.section.title).toLowerCase().includes(this.search.toLowerCase())
+            })
+          }
         },
         mounted() {
             this.loadUser();

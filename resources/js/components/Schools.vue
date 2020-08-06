@@ -13,9 +13,9 @@
                   </button>
                 <div class="card-tools mt-2">
                   <div class="input-group input-group-sm">
-                    <input v-model="search" type="text" name="table_search" class="form-control float-right" id="table_search" placeholder="Search" @keyup.enter="searchit">
+                    <input v-model="search" type="text" name="table_search" class="form-control float-right" id="table_search" placeholder="Search">
                     <div class="input-group-append ml-2">
-                      <button class="btn btn-primary" id="s_btn" @click="searchit">
+                      <button class="btn btn-primary" id="s_btn">
                         <i class="fas fa-search"></i>
                       </button>
                     </div>
@@ -36,7 +36,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-if="schools.data.length > 0" v-for="school in schools.data">
+                    <tr v-if="schools.data.length > 0" v-for="school in filteredList">
                       <td>{{school.school_id}}</td>
                       <td>{{school.program_title}}</td>
                       <td>{{school.school_title}}</td>
@@ -103,7 +103,6 @@
             </div>
           </div>
         </div>
-
         <div class="modal fade" id="schoolModalDetail" tabindex="-1" role="dialog" aria-labelledby="schoolModalDetailLabel" aria-hidden="true">
           <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -139,7 +138,7 @@
           return{
             search:'',
             editmode: false,
-            schools:{},
+            schools:{data: []},
             programs:{},
             form: new Form({
               school_id:    '',
@@ -230,9 +229,15 @@
             })
             .catch(()=>{});
           },
-          searchit(){
-            Fire.$emit('searching');
-      }
+        },       
+        computed:{
+          filteredList:function(){
+            return this.schools.data.filter(school =>{
+              return school.school_title.toLowerCase().includes(this.search.toLowerCase()) ||
+              school.program_title.toLowerCase().includes(this.search.toLowerCase()) ||
+              school.location.toLowerCase().includes(this.search.toLowerCase())
+            })
+          }
         },
         mounted() {
             this.loadSchool();

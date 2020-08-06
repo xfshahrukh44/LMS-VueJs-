@@ -179,7 +179,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
           </li>
 
           @endcanany
-
+          
           @canany(['isAdmin', 'isTeacher','isStudent'])
 
           <li class="nav-item has-treeview">
@@ -187,6 +187,15 @@ scratch. This page gets rid of all links and provides the needed markup only.
               <i class="nav-icon fas fa-video yellow"></i>
               <p>
                 Session
+              </p>
+            </router-link>
+          </li>
+
+          <li class="nav-item has-treeview">
+            <router-link to="/lectureIndex" class="nav-link">
+              <i class="nav-icon fab fa-youtube red"></i>
+              <p>
+                Lectures
               </p>
             </router-link>
           </li>
