@@ -60,6 +60,7 @@ Route::get('get_user_teacher','API\TeacherController@get_user_teacher');
 Route::get('get_session_section','API\SessionController@get_session_section');
 Route::get('get_session_course','API\SessionController@get_session_course');
 Route::get('get_session_teacher','API\SessionController@get_session_teacher');
+Route::get('change_meeting_state', 'API\SessionController@change_meeting_state');
 
 
 Route::get('chart_data','API\UserController@chart_data');

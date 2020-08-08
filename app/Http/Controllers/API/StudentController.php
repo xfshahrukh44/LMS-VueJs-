@@ -131,7 +131,9 @@ class StudentController extends Controller
 
     public function get_student_section()
     {
-        return Section::all();
+        return Section::with('classroom', 'sessions.course', 'students')->get();
+
+        // return Section::all();
     }
 
     public function get_user_student(Request $request)

@@ -105,7 +105,7 @@
                 <div class="form-group">
                   <select v-model="form.section_id" id="section_id" name="section_id" class="form-control" :class="{ 'is-invalid': form.errors.has('section_id') }">
                     <option value="">Select Section</option>
-                    <option v-for="section in sections" :value="section.id">{{section.title}}</option>
+                    <option v-for="section in sections" :value="section.id">{{section.classroom.title + ' - ' + section.title}}</option>
                   </select>
                 </div>
               </div>

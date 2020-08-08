@@ -1,50 +1,124 @@
 <template>
     <div class="container">
-        <div class="row mt-3 ml-1">
-            <h2>Your Classes</h2>
+        <div class="row mt-3 ml-1 mb-2">
+            <h2 class="pr-2">Your Classes</h2>
+            <button class="btn btn-success xs" id="add_session" @click="AddSessionModal" v-if="$gate.isAdmin()">
+                <i class="fas fa-plus fa-lg"></i>
+            </button>
         </div>
 
         <!-- INDEX VIEW -->
         <div class="row">
           <div class="card card-primary col-md-3 ml-3" v-if="sessions.data.length > 0" v-for="session in filteredList">
-              <div class="card-body box-profile">
+            <div class="card-header" v-if="$gate.isAdmin() || $gate.isTeacher()">
+              <div class="dropdown">
+                <button class="btn dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <span class="material-icons">settings</span>
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                  <a href="#" @click="EditSessionModal(session)" v-if="$gate.isAdmin()">
+                    <button class="dropdown-item" type="button">
+                      <div class="row">
+                        <i class="material-icons blue mr-1">create</i>
+                        Edit
+                      </div>
+                    </button>
+                  </a>
+                  <a href="#" @click="deleteSession(session.id)" v-if="$gate.isAdmin()">
+                    <button class="dropdown-item" type="button">
+                      <div class="row">
+                        <i class="material-icons red mr-1">delete</i>
+                        Delete
+                      </div>
+                    </button>
+                  </a>
+                  <div class="dropdown-divider" v-if="$gate.isAdmin()"></div>
 
-                <h1 class="profile-username text-center">{{session.course.title}}</h1>
+                  <a href="#" @click="DetailSessionModal(session)" v-if="$gate.isAdmin() || $gate.isTeacher()">
+                    <button class="dropdown-item" type="button">
+                      <div class="row">
+                        <i class="material-icons mr-1 green">add</i>
+                        Create New..
+                      </div>
+                    </button>
+                  </a>
+                  <div class="dropdown-divider" v-if="$gate.isAdmin() || $gate.isTeacher()"></div>
 
-                <p class="text-muted text-center">{{session.teacher.name}}</p>
-
-                <!-- //children -->
-                <h5>Assignments</h5>
-                <ul id="assignments">
-                  <li v-for="assignment in session.assignments">
-                    <a href="#" @click="openAssignment(assignment)">{{assignment.title}}</a>
-                  </li>
-                </ul>
-                <assign></assign>
-
-                <h5>Quizzes</h5>
-                <ul id="quizzes">
-                  <li v-for="quiz in session.quizzes">
-                    <a href="#" @click="openQuiz(quiz)">{{quiz.title}}</a>
-                    <a class="float-right red" href="#" @click="submitQuiz(quiz)" :id="'quiz' + quiz.id" v-if="$gate.isStudent()">Start Quiz</a>
-                  </li>     
-                </ul>
-
-                <!-- Buttons -->
-                
-              
-              </div>
-              <!-- /.card-body -->
-              <div class="card-footer" id="cardFooter">
-                <a id="createButton" class="btn btn-primary btn-block mb-1" href="#" @click="DetailSessionModal(session)" v-if="$gate.isAdmin() || $gate.isTeacher()">Create New...</a>
-                <a class="btn btn-primary btn-block mb-1" @click="updateSessionId(session.id)">
-                  <div class="row justify-content-center white">
-                    <i class="material-icons white mr-1">menu_book</i>
-                    <b>View Lectures</b>
-                  </div>
-                </a>
+                  <a href="#" @click="changeMeetingState(session)" v-if="$gate.isAdmin() || $gate.isTeacher()">
+                    <button class="dropdown-item" type="button" v-if="session.state == 'disable'">
+                      <div class="row">
+                        <i class="material-icons mr-1 green">toggle_on</i>
+                        Enable Meeting
+                      </div>
+                    </button>
+                    <button class="dropdown-item" type="button" v-if="session.state == 'enable'">
+                      <div class="row">
+                        <i class="material-icons mr-1 red">toggle_off</i>
+                        Disable Meeting
+                      </div>
+                    </button>
+                  </a>
+                  <a href="#" @click="" v-if="$gate.isAdmin() || $gate.isTeacher()">
+                    <button class="dropdown-item" type="button">
+                      <div class="row">
+                        <i class="material-icons mr-1 blue">link</i>
+                        Change Meeting URL
+                      </div>
+                    </button>
+                  </a>
+                </div>
               </div>
             </div>
+            <div class="card-body box-profile">
+
+              <h1 class="profile-username text-center">{{session.course.title}}</h1>
+              
+              <div id="actions" style="text-align: right;">
+                
+              </div>
+
+              <p class="text-muted text-center">{{session.teacher.name}}</p>
+
+              <!-- //children -->   
+              <h5 class="row"><i class="material-icons mr-1">assignment</i>Assignments</h5>
+              <ul id="assignments">
+                <li v-for="assignment in session.assignments">
+                  <a href="#" @click="openAssignment(assignment)">{{assignment.title}}</a>
+                </li>
+              </ul>
+              <assign></assign>
+
+              <h5 class="row"><i class="material-icons mr-1">spellcheck</i>Quizzes</h5>
+              <ul id="quizzes">
+                <li v-for="quiz in session.quizzes">
+                  <a href="#" @click="openQuiz(quiz)">{{quiz.title}}</a>
+                  <a class="float-right red" href="#" @click="submitQuiz(quiz)" :id="'quiz' + quiz.id" v-if="$gate.isStudent()">Start Quiz</a>
+                </li>     
+              </ul>
+
+              <h5 class="row">
+                <i class="material-icons mr-1">menu_book</i>
+                Lectures 
+                <a href="#" @click="updateSessionId(session.id)">({{session.lectures.length}})</a>
+              </h5>
+            </div>
+            <!-- Buttons -->
+            <!-- /.card-body -->
+            <div class="card-footer" id="cardFooter">
+              <!-- <a id="createButton" class="btn btn-primary btn-block mb-1" href="#" @click="DetailSessionModal(session)" v-if="$gate.isAdmin() || $gate.isTeacher()">
+                Create New...
+              </a> -->
+              <!-- <a class="btn btn-primary btn-block mb-1" @click="updateSessionId(session.id)">
+                <div class="row justify-content-center white">
+                  <i class="material-icons white mr-1">menu_book</i>
+                  <b>View Lectures</b>
+                </div>
+              </a> -->
+              <a :href="session.meeting_url" v-if="session.state == 'enable'" class="btn btn-warning btn-block mb-1">
+                Join Meeting
+              </a>
+            </div>
+          </div>
         </div>
 
         <!-- CREATE/EDIT VIEW -->
@@ -63,7 +137,7 @@
                 <div class="form-group">
                   <select v-model="form.section_id" id="section_id" name="section_id" class="form-control" :class="{ 'is-invalid': form.errors.has('section_id') }">
                     <option value="">Select Section</option>
-                    <option v-for="section in sections" :value="section.id">{{section.title}}</option>
+                    <option v-for="section in sections" :value="section.id">{{section.classroom.title + ' - ' + section.title}}</option>
                   </select>
                 </div>
                 <div class="form-group">
@@ -379,6 +453,13 @@
             // $('#sessionModalDetail').modal('hide');
             this.$router.push({name: 'lectureIndex', params: {session_id: this.current_session_id}});
           },
+          changeMeetingState(session){
+            axios.get('api/change_meeting_state?session_id=' + session.id)
+            // axios.put('api/change_meeting_state'+session.id)
+            .then(() => {
+              this.loadSession();
+            });
+          },
           openAssignment(assignment){
             this.assign_name = assignment.file;
             this.assign_type = assignment.type;
@@ -621,6 +702,15 @@
 
 
 <style scoped lang="scss">
+.card-header{
+  background-color:white !important;
+  text-align: right;
+  padding: 0;
+  width: 106%;
+}
+.card-body{
+  padding-top:0;
+}
 .base-timer {
   position: relative;
   width: 200px;

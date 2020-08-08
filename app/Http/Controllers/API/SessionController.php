@@ -5,10 +5,11 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Teacher;
+use App\Models\Student;
 use App\Models\Section;
 use App\Models\Course;
 use App\Models\Session;
-
+use Illuminate\Support\Facades\Gate;
 
 class SessionController extends Controller
 {
@@ -24,7 +25,26 @@ class SessionController extends Controller
 
      public function index()
     {
-        return $session = Session::with('section.classroom','course.classroom','teacher', 'assignments', 'quizzes.questions.options', 'quizzes.quiz_submissions.student', 'quizzes.session.section.classroom.school', 'quizzes.session.course', 'quizzes.session.teacher')->paginate(5);
+        if(Gate::allows('isAdmin'))
+        {
+            return Session::with('section.classroom','course.classroom','teacher', 'assignments', 'quizzes.questions.options', 'quizzes.quiz_submissions.student', 'quizzes.session.section.classroom.school', 'quizzes.session.course', 'quizzes.session.teacher', 'lectures')->paginate(5);
+        }
+        if(Gate::allows('isTeacher'))
+        {
+            $teacher = (Teacher::where('user_id', auth('api')->user()->id)->get())[0];
+
+            return Session::with('section.classroom','course.classroom','teacher', 'assignments', 'quizzes.questions.options', 'quizzes.quiz_submissions.student', 'quizzes.session.section.classroom.school', 'quizzes.session.course', 'quizzes.session.teacher', 'lectures')
+            ->where('teacher_id', $teacher->id)
+            ->paginate(5);
+        }
+        if(Gate::allows('isStudent'))
+        {
+            $student = (Student::where('user_id', auth('api')->user()->id)->get())[0];
+
+            return Session::with('section.classroom','course.classroom','teacher', 'assignments', 'quizzes.questions.options', 'quizzes.quiz_submissions.student', 'quizzes.session.section.classroom.school', 'quizzes.session.course', 'quizzes.session.teacher', 'lectures')
+            ->where('section_id', $student->section->id)
+            ->paginate(5);
+        }
     }
 
     /**
@@ -64,6 +84,11 @@ class SessionController extends Controller
      */
     public function update(Request $request, $id)
     {
+        return dd($request);
+        if($request->change)
+        {
+            return Session::find($id)->update($request->all());
+        }
         $this->validate($request,[ 
             'section_id' => 'required|integer',
             'course_id' => 'required|integer',
@@ -143,7 +168,7 @@ class SessionController extends Controller
 
     public function get_session_section()
     {
-        return Section::all();
+        return Section::with('classroom', 'sessions.course', 'students')->get();
     }
 
     public function get_session_course()
@@ -154,5 +179,24 @@ class SessionController extends Controller
     public function get_session_teacher()
     {
         return Teacher::all();
+    }
+
+    public function change_meeting_state(Request $request)
+    {
+        $session = Session::find($request->session_id);
+        if($session->state == 'enable')
+        {
+            $session->update([
+                'state' => 'disable'
+            ]);
+            return $session->save();
+        }
+        else
+        {
+            $session->update([
+                'state' => 'enable'
+            ]);
+            return $session->save();
+        }
     }
 }

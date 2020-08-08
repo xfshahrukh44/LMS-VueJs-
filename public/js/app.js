@@ -4828,6 +4828,80 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 // Timer Code Variables
 var FULL_DASH_ARRAY = 283;
 var WARNING_THRESHOLD = 0;
@@ -4927,6 +5001,14 @@ var TIME_LIMIT = 0; // Timer Code Variables End
         }
       });
     },
+    changeMeetingState: function changeMeetingState(session) {
+      var _this3 = this;
+
+      axios.get('api/change_meeting_state?session_id=' + session.id) // axios.put('api/change_meeting_state'+session.id)
+      .then(function () {
+        _this3.loadSession();
+      });
+    },
     openAssignment: function openAssignment(assignment) {
       this.assign_name = assignment.file;
       this.assign_type = assignment.type;
@@ -4942,7 +5024,7 @@ var TIME_LIMIT = 0; // Timer Code Variables End
       $('#quizModalDetail').modal('show');
     },
     submitQuiz: function submitQuiz(quiz) {
-      var _this3 = this;
+      var _this4 = this;
 
       $(window).bind("beforeunload", function (event) {
         return "You have some unsaved changes";
@@ -4970,10 +5052,10 @@ var TIME_LIMIT = 0; // Timer Code Variables End
             keyboard: false
           });
           $('#submitQuizModalDetail').modal('show');
-          _this3.trigger++;
+          _this4.trigger++;
 
-          if (_this3.trigger == 1) {
-            _this3.startTimer();
+          if (_this4.trigger == 1) {
+            _this4.startTimer();
           }
         }
       });
@@ -5006,7 +5088,7 @@ var TIME_LIMIT = 0; // Timer Code Variables End
       console.log(marks_obtained);
     },
     deleteSession: function deleteSession(id) {
-      var _this4 = this;
+      var _this5 = this;
 
       Swal.fire({
         title: 'Are you sure?',
@@ -5018,7 +5100,7 @@ var TIME_LIMIT = 0; // Timer Code Variables End
         confirmButtonText: 'Yes, delete it!'
       }).then(function (result) {
         if (result.value) {
-          _this4.form["delete"]('api/session/' + id);
+          _this5.form["delete"]('api/session/' + id);
 
           Swal.fire('Deleted!', 'Your file has been deleted.', 'success');
           Fire.$emit('searching');
@@ -5026,39 +5108,39 @@ var TIME_LIMIT = 0; // Timer Code Variables End
       });
     },
     loadSection: function loadSection() {
-      var _this5 = this;
+      var _this6 = this;
 
       axios.get('api/get_session_section').then(function (_ref4) {
         var data = _ref4.data;
-        return _this5.sections = data;
+        return _this6.sections = data;
       });
     },
     loadCourse: function loadCourse() {
-      var _this6 = this;
+      var _this7 = this;
 
       axios.get('api/get_session_course').then(function (_ref5) {
         var data = _ref5.data;
-        return _this6.courses = data;
+        return _this7.courses = data;
       });
     },
     loadTeacher: function loadTeacher() {
-      var _this7 = this;
+      var _this8 = this;
 
       axios.get('api/get_session_teacher').then(function (_ref6) {
         var data = _ref6.data;
-        return _this7.teachers = data;
+        return _this8.teachers = data;
       });
     },
     loadSession: function loadSession() {
-      var _this8 = this;
+      var _this9 = this;
 
       axios.get('api/session').then(function (_ref7) {
         var data = _ref7.data;
-        return _this8.sessions = data;
+        return _this9.sessions = data;
       });
     },
     createSession: function createSession() {
-      var _this9 = this;
+      var _this10 = this;
 
       this.$Progress.start();
       this.form.post('api/session').then(function () {
@@ -5069,11 +5151,11 @@ var TIME_LIMIT = 0; // Timer Code Variables End
           title: 'Session Created Successfully'
         });
 
-        _this9.$Progress.finish();
+        _this10.$Progress.finish();
       })["catch"](function () {});
     },
     createAssignment: function createAssignment() {
-      var _this10 = this;
+      var _this11 = this;
 
       this.$Progress.start();
       this.assignment_form.post('api/assignment').then(function () {
@@ -5085,13 +5167,13 @@ var TIME_LIMIT = 0; // Timer Code Variables End
           title: 'Assignment Created Successfully'
         });
 
-        _this10.loadSession();
+        _this11.loadSession();
 
-        _this10.$Progress.finish();
+        _this11.$Progress.finish();
       })["catch"](function () {});
     },
     updateSession: function updateSession() {
-      var _this11 = this;
+      var _this12 = this;
 
       this.$Progress.start();
       this.form.put('api/session/' + this.form.id).then(function () {
@@ -5102,7 +5184,7 @@ var TIME_LIMIT = 0; // Timer Code Variables End
           title: 'Session Updated Successfully'
         });
 
-        _this11.$Progress.finish();
+        _this12.$Progress.finish();
       })["catch"](function () {});
     },
     onTimesUp: function onTimesUp() {
@@ -5110,19 +5192,19 @@ var TIME_LIMIT = 0; // Timer Code Variables End
       this.markQuiz(this.current_quiz);
     },
     startTimer: function startTimer() {
-      var _this12 = this;
+      var _this13 = this;
 
       this.timerInterval = setInterval(function () {
-        return _this12.timePassed += 1;
+        return _this13.timePassed += 1;
       }, 1000);
     }
   },
   computed: {
     filteredList: function filteredList() {
-      var _this13 = this;
+      var _this14 = this;
 
       return this.sessions.data.filter(function (session) {
-        return (session.section.classroom.title + session.section.title).toLowerCase().includes(_this13.search.toLowerCase()) || (session.section.classroom.title + '-' + session.course.title).toLowerCase().includes(_this13.search.toLowerCase()) || session.teacher.name.toLowerCase().includes(_this13.search.toLowerCase());
+        return (session.section.classroom.title + session.section.title).toLowerCase().includes(_this14.search.toLowerCase()) || (session.section.classroom.title + '-' + session.course.title).toLowerCase().includes(_this14.search.toLowerCase()) || session.teacher.name.toLowerCase().includes(_this14.search.toLowerCase());
       });
     },
     circleDasharray: function circleDasharray() {
@@ -5171,21 +5253,21 @@ var TIME_LIMIT = 0; // Timer Code Variables End
     }
   },
   mounted: function mounted() {
-    var _this14 = this;
+    var _this15 = this;
 
     this.loadSession();
     this.loadSection();
     this.loadCourse();
     this.loadTeacher();
     Fire.$on('searching', function () {
-      var query = _this14.search;
+      var query = _this15.search;
       axios.get('api/findsession?q=' + query).then(function (_ref8) {
         var data = _ref8.data;
-        return _this14.sessions = data;
+        return _this15.sessions = data;
       });
     });
     Fire.$on('RefreshTable', function () {
-      return _this14.loadSession();
+      return _this15.loadSession();
     });
   }
 });
@@ -29151,7 +29233,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, ".base-timer[data-v-1b5960f0] {\n  position: relative;\n  width: 200px;\n  height: 200px;\n}\n.base-timer__svg[data-v-1b5960f0] {\n  transform: scaleX(-1);\n}\n.base-timer__circle[data-v-1b5960f0] {\n  fill: none;\n  stroke: none;\n}\n.base-timer__path-elapsed[data-v-1b5960f0] {\n  stroke-width: 5px;\n  stroke: white;\n}\n.base-timer__path-remaining[data-v-1b5960f0] {\n  stroke-width: 5px;\n  stroke-linecap: round;\n  transform: rotate(90deg);\n  transform-origin: center;\n  transition: 1s linear all;\n  fill-rule: nonzero;\n  stroke: currentColor;\n}\n.base-timer__path-remaining.green[data-v-1b5960f0] {\n  color: #41b883;\n}\n.base-timer__path-remaining.orange[data-v-1b5960f0] {\n  color: orange;\n}\n.base-timer__path-remaining.red[data-v-1b5960f0] {\n  color: red;\n}\n.base-timer__label[data-v-1b5960f0] {\n  position: absolute;\n  width: 200px;\n  height: 200px;\n  top: 0;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  font-size: 40px;\n}", ""]);
+exports.push([module.i, ".card-header[data-v-1b5960f0] {\n  background-color: white !important;\n  text-align: right;\n  padding: 0;\n  width: 106%;\n}\n.card-body[data-v-1b5960f0] {\n  padding-top: 0;\n}\n.base-timer[data-v-1b5960f0] {\n  position: relative;\n  width: 200px;\n  height: 200px;\n}\n.base-timer__svg[data-v-1b5960f0] {\n  transform: scaleX(-1);\n}\n.base-timer__circle[data-v-1b5960f0] {\n  fill: none;\n  stroke: none;\n}\n.base-timer__path-elapsed[data-v-1b5960f0] {\n  stroke-width: 5px;\n  stroke: white;\n}\n.base-timer__path-remaining[data-v-1b5960f0] {\n  stroke-width: 5px;\n  stroke-linecap: round;\n  transform: rotate(90deg);\n  transform-origin: center;\n  transition: 1s linear all;\n  fill-rule: nonzero;\n  stroke: currentColor;\n}\n.base-timer__path-remaining.green[data-v-1b5960f0] {\n  color: #41b883;\n}\n.base-timer__path-remaining.orange[data-v-1b5960f0] {\n  color: orange;\n}\n.base-timer__path-remaining.red[data-v-1b5960f0] {\n  color: red;\n}\n.base-timer__label[data-v-1b5960f0] {\n  position: absolute;\n  width: 200px;\n  height: 200px;\n  top: 0;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  font-size: 40px;\n}", ""]);
 
 // exports
 
@@ -102092,7 +102174,21 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "container" }, [
-    _vm._m(0),
+    _c("div", { staticClass: "row mt-3 ml-1 mb-2" }, [
+      _c("h2", { staticClass: "pr-2" }, [_vm._v("Your Classes")]),
+      _vm._v(" "),
+      _vm.$gate.isAdmin()
+        ? _c(
+            "button",
+            {
+              staticClass: "btn btn-success xs",
+              attrs: { id: "add_session" },
+              on: { click: _vm.AddSessionModal }
+            },
+            [_c("i", { staticClass: "fas fa-plus fa-lg" })]
+          )
+        : _vm._e()
+    ]),
     _vm._v(" "),
     _c(
       "div",
@@ -102100,6 +102196,124 @@ var render = function() {
       _vm._l(_vm.filteredList, function(session) {
         return _vm.sessions.data.length > 0
           ? _c("div", { staticClass: "card card-primary col-md-3 ml-3" }, [
+              _vm.$gate.isAdmin() || _vm.$gate.isTeacher()
+                ? _c("div", { staticClass: "card-header" }, [
+                    _c("div", { staticClass: "dropdown" }, [
+                      _vm._m(0, true),
+                      _vm._v(" "),
+                      _c(
+                        "div",
+                        {
+                          staticClass: "dropdown-menu",
+                          attrs: { "aria-labelledby": "dropdownMenu2" }
+                        },
+                        [
+                          _vm.$gate.isAdmin()
+                            ? _c(
+                                "a",
+                                {
+                                  attrs: { href: "#" },
+                                  on: {
+                                    click: function($event) {
+                                      return _vm.EditSessionModal(session)
+                                    }
+                                  }
+                                },
+                                [_vm._m(1, true)]
+                              )
+                            : _vm._e(),
+                          _vm._v(" "),
+                          _vm.$gate.isAdmin()
+                            ? _c(
+                                "a",
+                                {
+                                  attrs: { href: "#" },
+                                  on: {
+                                    click: function($event) {
+                                      return _vm.deleteSession(session.id)
+                                    }
+                                  }
+                                },
+                                [_vm._m(2, true)]
+                              )
+                            : _vm._e(),
+                          _vm._v(" "),
+                          _vm.$gate.isAdmin()
+                            ? _c("div", { staticClass: "dropdown-divider" })
+                            : _vm._e(),
+                          _vm._v(" "),
+                          _vm.$gate.isAdmin() || _vm.$gate.isTeacher()
+                            ? _c(
+                                "a",
+                                {
+                                  attrs: { href: "#" },
+                                  on: {
+                                    click: function($event) {
+                                      return _vm.DetailSessionModal(session)
+                                    }
+                                  }
+                                },
+                                [_vm._m(3, true)]
+                              )
+                            : _vm._e(),
+                          _vm._v(" "),
+                          _vm.$gate.isAdmin() || _vm.$gate.isTeacher()
+                            ? _c("div", { staticClass: "dropdown-divider" })
+                            : _vm._e(),
+                          _vm._v(" "),
+                          _vm.$gate.isAdmin() || _vm.$gate.isTeacher()
+                            ? _c(
+                                "a",
+                                {
+                                  attrs: { href: "#" },
+                                  on: {
+                                    click: function($event) {
+                                      return _vm.changeMeetingState(session)
+                                    }
+                                  }
+                                },
+                                [
+                                  session.state == "disable"
+                                    ? _c(
+                                        "button",
+                                        {
+                                          staticClass: "dropdown-item",
+                                          attrs: { type: "button" }
+                                        },
+                                        [_vm._m(4, true)]
+                                      )
+                                    : _vm._e(),
+                                  _vm._v(" "),
+                                  session.state == "enable"
+                                    ? _c(
+                                        "button",
+                                        {
+                                          staticClass: "dropdown-item",
+                                          attrs: { type: "button" }
+                                        },
+                                        [_vm._m(5, true)]
+                                      )
+                                    : _vm._e()
+                                ]
+                              )
+                            : _vm._e(),
+                          _vm._v(" "),
+                          _vm.$gate.isAdmin() || _vm.$gate.isTeacher()
+                            ? _c(
+                                "a",
+                                {
+                                  attrs: { href: "#" },
+                                  on: { click: function($event) {} }
+                                },
+                                [_vm._m(6, true)]
+                              )
+                            : _vm._e()
+                        ]
+                      )
+                    ])
+                  ])
+                : _vm._e(),
+              _vm._v(" "),
               _c(
                 "div",
                 { staticClass: "card-body box-profile" },
@@ -102108,11 +102322,16 @@ var render = function() {
                     _vm._v(_vm._s(session.course.title))
                   ]),
                   _vm._v(" "),
+                  _c("div", {
+                    staticStyle: { "text-align": "right" },
+                    attrs: { id: "actions" }
+                  }),
+                  _vm._v(" "),
                   _c("p", { staticClass: "text-muted text-center" }, [
                     _vm._v(_vm._s(session.teacher.name))
                   ]),
                   _vm._v(" "),
-                  _c("h5", [_vm._v("Assignments")]),
+                  _vm._m(7, true),
                   _vm._v(" "),
                   _c(
                     "ul",
@@ -102138,7 +102357,7 @@ var render = function() {
                   _vm._v(" "),
                   _c("assign"),
                   _vm._v(" "),
-                  _c("h5", [_vm._v("Quizzes")]),
+                  _vm._m(8, true),
                   _vm._v(" "),
                   _c(
                     "ul",
@@ -102176,7 +102395,26 @@ var render = function() {
                       ])
                     }),
                     0
-                  )
+                  ),
+                  _vm._v(" "),
+                  _c("h5", { staticClass: "row" }, [
+                    _c("i", { staticClass: "material-icons mr-1" }, [
+                      _vm._v("menu_book")
+                    ]),
+                    _vm._v("\n            Lectures \n            "),
+                    _c(
+                      "a",
+                      {
+                        attrs: { href: "#" },
+                        on: {
+                          click: function($event) {
+                            return _vm.updateSessionId(session.id)
+                          }
+                        }
+                      },
+                      [_vm._v("(" + _vm._s(session.lectures.length) + ")")]
+                    )
+                  ])
                 ],
                 1
               ),
@@ -102185,34 +102423,16 @@ var render = function() {
                 "div",
                 { staticClass: "card-footer", attrs: { id: "cardFooter" } },
                 [
-                  _vm.$gate.isAdmin() || _vm.$gate.isTeacher()
+                  session.state == "enable"
                     ? _c(
                         "a",
                         {
-                          staticClass: "btn btn-primary btn-block mb-1",
-                          attrs: { id: "createButton", href: "#" },
-                          on: {
-                            click: function($event) {
-                              return _vm.DetailSessionModal(session)
-                            }
-                          }
+                          staticClass: "btn btn-warning btn-block mb-1",
+                          attrs: { href: session.meeting_url }
                         },
-                        [_vm._v("Create New...")]
+                        [_vm._v("\n            Join Meeting\n          ")]
                       )
-                    : _vm._e(),
-                  _vm._v(" "),
-                  _c(
-                    "a",
-                    {
-                      staticClass: "btn btn-primary btn-block mb-1",
-                      on: {
-                        click: function($event) {
-                          return _vm.updateSessionId(session.id)
-                        }
-                      }
-                    },
-                    [_vm._m(1, true)]
-                  )
+                    : _vm._e()
                 ]
               )
             ])
@@ -102271,7 +102491,7 @@ var render = function() {
                 [_vm._v("Update Session")]
               ),
               _vm._v(" "),
-              _vm._m(2)
+              _vm._m(9)
             ]),
             _vm._v(" "),
             _c(
@@ -102332,7 +102552,15 @@ var render = function() {
                           return _c(
                             "option",
                             { domProps: { value: section.id } },
-                            [_vm._v(_vm._s(section.title))]
+                            [
+                              _vm._v(
+                                _vm._s(
+                                  section.classroom.title +
+                                    " - " +
+                                    section.title
+                                )
+                              )
+                            ]
                           )
                         })
                       ],
@@ -102708,7 +102936,7 @@ var render = function() {
                 [_vm._v("Update Assignment")]
               ),
               _vm._v(" "),
-              _vm._m(3)
+              _vm._m(10)
             ]),
             _vm._v(" "),
             _c(
@@ -103010,7 +103238,7 @@ var render = function() {
       [
         _c("div", { staticClass: "modal-dialog modal-dialog-centered" }, [
           _c("div", { staticClass: "modal-content" }, [
-            _vm._m(4),
+            _vm._m(11),
             _vm._v(" "),
             _c("div", { staticClass: "modal-body" }, [
               _c("h3", { staticClass: "profile-username text-center black" }, [
@@ -103046,7 +103274,7 @@ var render = function() {
               )
             ]),
             _vm._v(" "),
-            _vm._m(5)
+            _vm._m(12)
           ])
         ])
       ]
@@ -103179,20 +103407,127 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "row mt-3 ml-1" }, [
-      _c("h2", [_vm._v("Your Classes")])
+    return _c(
+      "button",
+      {
+        staticClass: "btn dropdown-toggle",
+        attrs: {
+          type: "button",
+          id: "dropdownMenu2",
+          "data-toggle": "dropdown",
+          "aria-haspopup": "true",
+          "aria-expanded": "false"
+        }
+      },
+      [_c("span", { staticClass: "material-icons" }, [_vm._v("settings")])]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "button",
+      { staticClass: "dropdown-item", attrs: { type: "button" } },
+      [
+        _c("div", { staticClass: "row" }, [
+          _c("i", { staticClass: "material-icons blue mr-1" }, [
+            _vm._v("create")
+          ]),
+          _vm._v("\n                    Edit\n                  ")
+        ])
+      ]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "button",
+      { staticClass: "dropdown-item", attrs: { type: "button" } },
+      [
+        _c("div", { staticClass: "row" }, [
+          _c("i", { staticClass: "material-icons red mr-1" }, [
+            _vm._v("delete")
+          ]),
+          _vm._v("\n                    Delete\n                  ")
+        ])
+      ]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "button",
+      { staticClass: "dropdown-item", attrs: { type: "button" } },
+      [
+        _c("div", { staticClass: "row" }, [
+          _c("i", { staticClass: "material-icons mr-1 green" }, [
+            _vm._v("add")
+          ]),
+          _vm._v("\n                    Create New..\n                  ")
+        ])
+      ]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "row" }, [
+      _c("i", { staticClass: "material-icons mr-1 green" }, [
+        _vm._v("toggle_on")
+      ]),
+      _vm._v("\n                    Enable Meeting\n                  ")
     ])
   },
   function() {
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "row justify-content-center white" }, [
-      _c("i", { staticClass: "material-icons white mr-1" }, [
-        _vm._v("menu_book")
+    return _c("div", { staticClass: "row" }, [
+      _c("i", { staticClass: "material-icons mr-1 red" }, [
+        _vm._v("toggle_off")
       ]),
-      _vm._v(" "),
-      _c("b", [_vm._v("View Lectures")])
+      _vm._v("\n                    Disable Meeting\n                  ")
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "button",
+      { staticClass: "dropdown-item", attrs: { type: "button" } },
+      [
+        _c("div", { staticClass: "row" }, [
+          _c("i", { staticClass: "material-icons mr-1 blue" }, [
+            _vm._v("link")
+          ]),
+          _vm._v("\n                    Change Meeting URL\n                  ")
+        ])
+      ]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("h5", { staticClass: "row" }, [
+      _c("i", { staticClass: "material-icons mr-1" }, [_vm._v("assignment")]),
+      _vm._v("Assignments")
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("h5", { staticClass: "row" }, [
+      _c("i", { staticClass: "material-icons mr-1" }, [_vm._v("spellcheck")]),
+      _vm._v("Quizzes")
     ])
   },
   function() {
@@ -103741,7 +104076,15 @@ var render = function() {
                           return _c(
                             "option",
                             { domProps: { value: section.id } },
-                            [_vm._v(_vm._s(section.title))]
+                            [
+                              _vm._v(
+                                _vm._s(
+                                  section.classroom.title +
+                                    " - " +
+                                    section.title
+                                )
+                              )
+                            ]
                           )
                         })
                       ],
