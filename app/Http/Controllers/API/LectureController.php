@@ -5,6 +5,8 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Lecture;
+use App\Models\Session;
+use App\Models\Teacher;
 use Illuminate\Support\Facades\Gate;
 
 class LectureController extends Controller
@@ -26,6 +28,26 @@ class LectureController extends Controller
             return $lectures;
         }
         else{
+            if(Gate::allows('isAdmin'))
+            {
+                return Lecture::latest()->paginate(10);
+            }
+            else if(Gate::allows('isTeacher'))
+            {
+                $teacher = (Teacher::where('user_id', auth('api')->user()->id)->get())[0];
+                $sessions = Session::where('teacher_id', $teacher->id)->get();
+                // $lectures = [];
+                // foreach($sessions as $session)
+                // {
+                //     foreach($session->lectures as $lecture)
+                //     {
+                //         array_push($lectures, $lecture);
+                //     }
+                // }
+                // return $lectures;
+                return [Lecture::latest()->paginate(10), $teacher];
+                
+            }
             return Lecture::latest()->paginate(10);
         }
     }

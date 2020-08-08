@@ -5185,6 +5185,8 @@ var TIME_LIMIT = 0; // Timer Code Variables End
         });
 
         _this12.$Progress.finish();
+
+        _this12.loadSession();
       })["catch"](function () {});
     },
     onTimesUp: function onTimesUp() {
@@ -102303,7 +102305,11 @@ var render = function() {
                                 "a",
                                 {
                                   attrs: { href: "#" },
-                                  on: { click: function($event) {} }
+                                  on: {
+                                    click: function($event) {
+                                      return _vm.EditSessionModal(session)
+                                    }
+                                  }
                                 },
                                 [_vm._m(6, true)]
                               )
@@ -102506,271 +102512,283 @@ var render = function() {
               },
               [
                 _c("div", { staticClass: "modal-body" }, [
-                  _c("div", { staticClass: "form-group" }, [
-                    _c(
-                      "select",
-                      {
-                        directives: [
+                  _vm.$gate.isAdmin()
+                    ? _c("div", { staticClass: "form-group" }, [
+                        _c(
+                          "select",
                           {
-                            name: "model",
-                            rawName: "v-model",
-                            value: _vm.form.section_id,
-                            expression: "form.section_id"
-                          }
-                        ],
-                        staticClass: "form-control",
-                        class: {
-                          "is-invalid": _vm.form.errors.has("section_id")
-                        },
-                        attrs: { id: "section_id", name: "section_id" },
-                        on: {
-                          change: function($event) {
-                            var $$selectedVal = Array.prototype.filter
-                              .call($event.target.options, function(o) {
-                                return o.selected
-                              })
-                              .map(function(o) {
-                                var val = "_value" in o ? o._value : o.value
-                                return val
-                              })
-                            _vm.$set(
-                              _vm.form,
-                              "section_id",
-                              $event.target.multiple
-                                ? $$selectedVal
-                                : $$selectedVal[0]
-                            )
-                          }
-                        }
-                      },
-                      [
-                        _c("option", { attrs: { value: "" } }, [
-                          _vm._v("Select Section")
-                        ]),
-                        _vm._v(" "),
-                        _vm._l(_vm.sections, function(section) {
-                          return _c(
-                            "option",
-                            { domProps: { value: section.id } },
-                            [
-                              _vm._v(
-                                _vm._s(
-                                  section.classroom.title +
-                                    " - " +
-                                    section.title
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.form.section_id,
+                                expression: "form.section_id"
+                              }
+                            ],
+                            staticClass: "form-control",
+                            class: {
+                              "is-invalid": _vm.form.errors.has("section_id")
+                            },
+                            attrs: { id: "section_id", name: "section_id" },
+                            on: {
+                              change: function($event) {
+                                var $$selectedVal = Array.prototype.filter
+                                  .call($event.target.options, function(o) {
+                                    return o.selected
+                                  })
+                                  .map(function(o) {
+                                    var val = "_value" in o ? o._value : o.value
+                                    return val
+                                  })
+                                _vm.$set(
+                                  _vm.form,
+                                  "section_id",
+                                  $event.target.multiple
+                                    ? $$selectedVal
+                                    : $$selectedVal[0]
                                 )
-                              )
-                            ]
-                          )
-                        })
-                      ],
-                      2
-                    )
-                  ]),
-                  _vm._v(" "),
-                  _c("div", { staticClass: "form-group" }, [
-                    _c(
-                      "select",
-                      {
-                        directives: [
-                          {
-                            name: "model",
-                            rawName: "v-model",
-                            value: _vm.form.course_id,
-                            expression: "form.course_id"
-                          }
-                        ],
-                        staticClass: "form-control",
-                        class: {
-                          "is-invalid": _vm.form.errors.has("course_id")
-                        },
-                        attrs: { id: "course_id", name: "course_id" },
-                        on: {
-                          change: function($event) {
-                            var $$selectedVal = Array.prototype.filter
-                              .call($event.target.options, function(o) {
-                                return o.selected
-                              })
-                              .map(function(o) {
-                                var val = "_value" in o ? o._value : o.value
-                                return val
-                              })
-                            _vm.$set(
-                              _vm.form,
-                              "course_id",
-                              $event.target.multiple
-                                ? $$selectedVal
-                                : $$selectedVal[0]
-                            )
-                          }
-                        }
-                      },
-                      [
-                        _c("option", { attrs: { value: "" } }, [
-                          _vm._v("Select Course")
-                        ]),
-                        _vm._v(" "),
-                        _vm._l(_vm.courses, function(course) {
-                          return _c(
-                            "option",
-                            { domProps: { value: course.id } },
-                            [_vm._v(_vm._s(course.title))]
-                          )
-                        })
-                      ],
-                      2
-                    )
-                  ]),
-                  _vm._v(" "),
-                  _c("div", { staticClass: "form-group" }, [
-                    _c(
-                      "select",
-                      {
-                        directives: [
-                          {
-                            name: "model",
-                            rawName: "v-model",
-                            value: _vm.form.teacher_id,
-                            expression: "form.teacher_id"
-                          }
-                        ],
-                        staticClass: "form-control",
-                        class: {
-                          "is-invalid": _vm.form.errors.has("teacher_id")
-                        },
-                        attrs: { id: "teacher_id", name: "teacher_id" },
-                        on: {
-                          change: function($event) {
-                            var $$selectedVal = Array.prototype.filter
-                              .call($event.target.options, function(o) {
-                                return o.selected
-                              })
-                              .map(function(o) {
-                                var val = "_value" in o ? o._value : o.value
-                                return val
-                              })
-                            _vm.$set(
-                              _vm.form,
-                              "teacher_id",
-                              $event.target.multiple
-                                ? $$selectedVal
-                                : $$selectedVal[0]
-                            )
-                          }
-                        }
-                      },
-                      [
-                        _c("option", { attrs: { value: "" } }, [
-                          _vm._v("Select Teacher")
-                        ]),
-                        _vm._v(" "),
-                        _vm._l(_vm.teachers, function(teacher) {
-                          return _c(
-                            "option",
-                            { domProps: { value: teacher.id } },
-                            [_vm._v(_vm._s(teacher.name))]
-                          )
-                        })
-                      ],
-                      2
-                    )
-                  ]),
-                  _vm._v(" "),
-                  _c(
-                    "div",
-                    { staticClass: "form-group" },
-                    [
-                      _c("input", {
-                        directives: [
-                          {
-                            name: "model",
-                            rawName: "v-model",
-                            value: _vm.form.meeting_url,
-                            expression: "form.meeting_url"
-                          }
-                        ],
-                        staticClass: "form-control",
-                        class: {
-                          "is-invalid": _vm.form.errors.has("meeting_url")
-                        },
-                        attrs: {
-                          id: "meeting_url",
-                          type: "text",
-                          name: "meeting_url",
-                          placeholder: "Enter Name"
-                        },
-                        domProps: { value: _vm.form.meeting_url },
-                        on: {
-                          input: function($event) {
-                            if ($event.target.composing) {
-                              return
+                              }
                             }
-                            _vm.$set(
-                              _vm.form,
-                              "meeting_url",
-                              $event.target.value
-                            )
-                          }
-                        }
-                      }),
-                      _vm._v(" "),
-                      _c("has-error", {
-                        attrs: { form: _vm.form, field: "meeting_url" }
-                      })
-                    ],
-                    1
-                  ),
+                          },
+                          [
+                            _c("option", { attrs: { value: "" } }, [
+                              _vm._v("Select Section")
+                            ]),
+                            _vm._v(" "),
+                            _vm._l(_vm.sections, function(section) {
+                              return _c(
+                                "option",
+                                { domProps: { value: section.id } },
+                                [
+                                  _vm._v(
+                                    _vm._s(
+                                      section.classroom.title +
+                                        " - " +
+                                        section.title
+                                    )
+                                  )
+                                ]
+                              )
+                            })
+                          ],
+                          2
+                        )
+                      ])
+                    : _vm._e(),
                   _vm._v(" "),
-                  _c("div", { staticClass: "form-group" }, [
-                    _c(
-                      "select",
-                      {
-                        directives: [
+                  _vm.$gate.isAdmin()
+                    ? _c("div", { staticClass: "form-group" }, [
+                        _c(
+                          "select",
                           {
-                            name: "model",
-                            rawName: "v-model",
-                            value: _vm.form.state,
-                            expression: "form.state"
-                          }
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.form.course_id,
+                                expression: "form.course_id"
+                              }
+                            ],
+                            staticClass: "form-control",
+                            class: {
+                              "is-invalid": _vm.form.errors.has("course_id")
+                            },
+                            attrs: { id: "course_id", name: "course_id" },
+                            on: {
+                              change: function($event) {
+                                var $$selectedVal = Array.prototype.filter
+                                  .call($event.target.options, function(o) {
+                                    return o.selected
+                                  })
+                                  .map(function(o) {
+                                    var val = "_value" in o ? o._value : o.value
+                                    return val
+                                  })
+                                _vm.$set(
+                                  _vm.form,
+                                  "course_id",
+                                  $event.target.multiple
+                                    ? $$selectedVal
+                                    : $$selectedVal[0]
+                                )
+                              }
+                            }
+                          },
+                          [
+                            _c("option", { attrs: { value: "" } }, [
+                              _vm._v("Select Course")
+                            ]),
+                            _vm._v(" "),
+                            _vm._l(_vm.courses, function(course) {
+                              return _c(
+                                "option",
+                                { domProps: { value: course.id } },
+                                [_vm._v(_vm._s(course.title))]
+                              )
+                            })
+                          ],
+                          2
+                        )
+                      ])
+                    : _vm._e(),
+                  _vm._v(" "),
+                  _vm.$gate.isAdmin()
+                    ? _c("div", { staticClass: "form-group" }, [
+                        _c(
+                          "select",
+                          {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.form.teacher_id,
+                                expression: "form.teacher_id"
+                              }
+                            ],
+                            staticClass: "form-control",
+                            class: {
+                              "is-invalid": _vm.form.errors.has("teacher_id")
+                            },
+                            attrs: { id: "teacher_id", name: "teacher_id" },
+                            on: {
+                              change: function($event) {
+                                var $$selectedVal = Array.prototype.filter
+                                  .call($event.target.options, function(o) {
+                                    return o.selected
+                                  })
+                                  .map(function(o) {
+                                    var val = "_value" in o ? o._value : o.value
+                                    return val
+                                  })
+                                _vm.$set(
+                                  _vm.form,
+                                  "teacher_id",
+                                  $event.target.multiple
+                                    ? $$selectedVal
+                                    : $$selectedVal[0]
+                                )
+                              }
+                            }
+                          },
+                          [
+                            _c("option", { attrs: { value: "" } }, [
+                              _vm._v("Select Teacher")
+                            ]),
+                            _vm._v(" "),
+                            _vm._l(_vm.teachers, function(teacher) {
+                              return _c(
+                                "option",
+                                { domProps: { value: teacher.id } },
+                                [_vm._v(_vm._s(teacher.name))]
+                              )
+                            })
+                          ],
+                          2
+                        )
+                      ])
+                    : _vm._e(),
+                  _vm._v(" "),
+                  _vm.$gate.isAdmin() || _vm.$gate.isTeacher()
+                    ? _c(
+                        "div",
+                        { staticClass: "form-group" },
+                        [
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.form.meeting_url,
+                                expression: "form.meeting_url"
+                              }
+                            ],
+                            staticClass: "form-control",
+                            class: {
+                              "is-invalid": _vm.form.errors.has("meeting_url")
+                            },
+                            attrs: {
+                              id: "meeting_url",
+                              type: "text",
+                              name: "meeting_url",
+                              placeholder: "Enter Name"
+                            },
+                            domProps: { value: _vm.form.meeting_url },
+                            on: {
+                              input: function($event) {
+                                if ($event.target.composing) {
+                                  return
+                                }
+                                _vm.$set(
+                                  _vm.form,
+                                  "meeting_url",
+                                  $event.target.value
+                                )
+                              }
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c("has-error", {
+                            attrs: { form: _vm.form, field: "meeting_url" }
+                          })
                         ],
-                        staticClass: "form-control",
-                        class: { "is-invalid": _vm.form.errors.has("state") },
-                        attrs: { id: "teacher_id", name: "state" },
-                        on: {
-                          change: function($event) {
-                            var $$selectedVal = Array.prototype.filter
-                              .call($event.target.options, function(o) {
-                                return o.selected
-                              })
-                              .map(function(o) {
-                                var val = "_value" in o ? o._value : o.value
-                                return val
-                              })
-                            _vm.$set(
-                              _vm.form,
-                              "state",
-                              $event.target.multiple
-                                ? $$selectedVal
-                                : $$selectedVal[0]
-                            )
-                          }
-                        }
-                      },
-                      [
-                        _c("option", { attrs: { value: "" } }, [
-                          _vm._v("Set State")
-                        ]),
-                        _vm._v(" "),
-                        _c("option", { attrs: { value: "enable" } }, [
-                          _vm._v("enable")
-                        ]),
-                        _vm._v(" "),
-                        _c("option", { attrs: { value: "disable" } }, [
-                          _vm._v("disable")
-                        ])
-                      ]
-                    )
-                  ])
+                        1
+                      )
+                    : _vm._e(),
+                  _vm._v(" "),
+                  _vm.$gate.isAdmin()
+                    ? _c("div", { staticClass: "form-group" }, [
+                        _c(
+                          "select",
+                          {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.form.state,
+                                expression: "form.state"
+                              }
+                            ],
+                            staticClass: "form-control",
+                            class: {
+                              "is-invalid": _vm.form.errors.has("state")
+                            },
+                            attrs: { id: "teacher_id", name: "state" },
+                            on: {
+                              change: function($event) {
+                                var $$selectedVal = Array.prototype.filter
+                                  .call($event.target.options, function(o) {
+                                    return o.selected
+                                  })
+                                  .map(function(o) {
+                                    var val = "_value" in o ? o._value : o.value
+                                    return val
+                                  })
+                                _vm.$set(
+                                  _vm.form,
+                                  "state",
+                                  $event.target.multiple
+                                    ? $$selectedVal
+                                    : $$selectedVal[0]
+                                )
+                              }
+                            }
+                          },
+                          [
+                            _c("option", { attrs: { value: "" } }, [
+                              _vm._v("Set State")
+                            ]),
+                            _vm._v(" "),
+                            _c("option", { attrs: { value: "enable" } }, [
+                              _vm._v("enable")
+                            ]),
+                            _vm._v(" "),
+                            _c("option", { attrs: { value: "disable" } }, [
+                              _vm._v("disable")
+                            ])
+                          ]
+                        )
+                      ])
+                    : _vm._e()
                 ]),
                 _vm._v(" "),
                 _c("div", { staticClass: "modal-footer" }, [

@@ -84,19 +84,25 @@ class SessionController extends Controller
      */
     public function update(Request $request, $id)
     {
-        return dd($request);
-        if($request->change)
+        if(Gate::allows('isAdmin'))
         {
-            return Session::find($id)->update($request->all());
+            $this->validate($request,[ 
+                'section_id' => 'required|integer',
+                'course_id' => 'required|integer',
+                'teacher_id' => 'required|integer'
+    
+            ]);
+            $session = Session::find($id)->update($request->all());
+            return['message'=>'Successfull'];
         }
-        $this->validate($request,[ 
-            'section_id' => 'required|integer',
-            'course_id' => 'required|integer',
-            'teacher_id' => 'required|integer'
-
-        ]);
-        $session = Session::find($id)->update($request->all());
-        return['message'=>'Successfull'];
+        if(Gate::allows('isTeacher'))
+        {
+            $this->validate($request,[ 
+                'meeting_url' => 'required',
+            ]);
+            $session = Session::find($id)->update($request->all());
+            return['message'=>'Successfull'];
+        }
     }
 
     /**

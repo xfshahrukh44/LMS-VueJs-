@@ -58,7 +58,7 @@
                       </div>
                     </button>
                   </a>
-                  <a href="#" @click="" v-if="$gate.isAdmin() || $gate.isTeacher()">
+                  <a href="#" @click="EditSessionModal(session)" v-if="$gate.isAdmin() || $gate.isTeacher()">
                     <button class="dropdown-item" type="button">
                       <div class="row">
                         <i class="material-icons mr-1 blue">link</i>
@@ -134,30 +134,30 @@
               </div>
               <form @submit.prevent="editmode ? updateSession() : createSession()">
               <div class="modal-body">
-                <div class="form-group">
+                <div class="form-group" v-if="$gate.isAdmin()">
                   <select v-model="form.section_id" id="section_id" name="section_id" class="form-control" :class="{ 'is-invalid': form.errors.has('section_id') }">
                     <option value="">Select Section</option>
                     <option v-for="section in sections" :value="section.id">{{section.classroom.title + ' - ' + section.title}}</option>
                   </select>
                 </div>
-                <div class="form-group">
+                <div class="form-group" v-if="$gate.isAdmin()">
                   <select v-model="form.course_id" id="course_id" name="course_id" class="form-control" :class="{ 'is-invalid': form.errors.has('course_id') }">
                     <option value="">Select Course</option>
                     <option v-for="course in courses" :value="course.id">{{course.title}}</option>
                   </select>
                 </div>
-                <div class="form-group">
+                <div class="form-group" v-if="$gate.isAdmin()">
                   <select v-model="form.teacher_id" id="teacher_id" name="teacher_id" class="form-control" :class="{ 'is-invalid': form.errors.has('teacher_id') }">
                     <option value="">Select Teacher</option>
                     <option v-for="teacher in teachers" :value="teacher.id">{{teacher.name}}</option>
                   </select>
                 </div>
-                <div class="form-group">
+                <div class="form-group" v-if="$gate.isAdmin() || $gate.isTeacher()">
                   <input v-model="form.meeting_url" id="meeting_url" type="text" name="meeting_url" placeholder="Enter Name"
                     class="form-control" :class="{ 'is-invalid': form.errors.has('meeting_url') }">
                   <has-error :form="form" field="meeting_url"></has-error>
                 </div>
-                <div class="form-group">
+                <div class="form-group" v-if="$gate.isAdmin()">
                   <select v-model="form.state" id="teacher_id" name="state" class="form-control" :class="{ 'is-invalid': form.errors.has('state') }">
                     <option value="">Set State</option>
                     <option value="enable">enable</option>
@@ -619,6 +619,7 @@
                 title: 'Session Updated Successfully'
               });
               this.$Progress.finish();
+              this.loadSession();
             })
             .catch(()=>{});
           },
