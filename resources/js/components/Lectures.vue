@@ -81,7 +81,7 @@
                     title: 'Lecture Created Successfully'
                 });
                 this.$Progress.finish();
-
+                this.$parent.methods.loadSession();
                 })
                 .catch(()=>{});
             },

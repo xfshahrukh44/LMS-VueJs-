@@ -3310,6 +3310,8 @@ __webpack_require__.r(__webpack_exports__);
         });
 
         _this.$Progress.finish();
+
+        _this.$parent.methods.loadSession();
       })["catch"](function () {});
     }
   },

@@ -5,9 +5,10 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Lecture;
-use App\Models\Session;
 use App\Models\Teacher;
+use App\Models\Student;
 use Illuminate\Support\Facades\Gate;
+use DB;
 
 class LectureController extends Controller
 {
@@ -32,23 +33,27 @@ class LectureController extends Controller
             {
                 return Lecture::latest()->paginate(10);
             }
-            else if(Gate::allows('isTeacher'))
+            if(Gate::allows('isTeacher'))
             {
                 $teacher = (Teacher::where('user_id', auth('api')->user()->id)->get())[0];
-                $sessions = Session::where('teacher_id', $teacher->id)->get();
-                // $lectures = [];
-                // foreach($sessions as $session)
-                // {
-                //     foreach($session->lectures as $lecture)
-                //     {
-                //         array_push($lectures, $lecture);
-                //     }
-                // }
-                // return $lectures;
-                return [Lecture::latest()->paginate(10), $teacher];
+                return DB::table('teachers')
+                        ->where('teachers.id', $teacher->id)
+                        ->join('sessions', 'teachers.id', '=', 'sessions.teacher_id')
+                        ->join('lectures', 'sessions.id', '=', 'lectures.session_id')
+                        ->select('lectures.title', 'lectures.url', 'lectures.created_at')
+                        ->latest()->paginate(5);
                 
             }
-            return Lecture::latest()->paginate(10);
+            if(Gate::allows('isStudent'))
+            {
+                $student = (Student::where('user_id', auth('api')->user()->id)->get())[0];
+                return DB::table('students')
+                            ->where('students.id', $student->id)
+                            ->join('sessions', 'students.section_id', '=', 'sessions.section_id')
+                            ->join('lectures', 'sessions.id', '=', 'lectures.session_id')
+                            ->select('lectures.title', 'lectures.url', 'lectures.created_at')
+                            ->latest()->paginate(5);
+            }
         }
     }
 
