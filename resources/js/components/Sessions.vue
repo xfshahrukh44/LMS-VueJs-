@@ -1,10 +1,14 @@
 <template>
-    <div class="container">
+    <div class="container" v-if="renderComponent">
         <div class="row mt-3 ml-1 mb-2">
             <h2 class="pr-2">Your Classes</h2>
             <button class="btn btn-success xs" id="add_session" @click="AddSessionModal" v-if="$gate.isAdmin()">
                 <i class="fas fa-plus fa-lg"></i>
             </button>
+            
+            <!-- <button class="btn btn-info xs" @click="forceRerender">
+              refresh
+            </button> -->
         </div>
 
         <!-- INDEX VIEW -->
@@ -98,9 +102,14 @@
 
               <h5 class="row">
                 <i class="material-icons mr-1">menu_book</i>
-                Lectures 
-                <a href="#" @click="updateSessionId(session.id)">({{session.lectures.length}})</a>
+                Lectures ({{session.lectures.length}})
+                <a href="#" @click="updateSessionId(session.id)">
+                  <span class="material-icons text-align-right">
+                    call_made
+                  </span>
+                </a>
               </h5>
+              
             </div>
             <!-- Buttons -->
             <!-- /.card-body -->
@@ -175,7 +184,7 @@
           </div>
         </div>
 
-        <!-- THREE BUTTONS -->
+        <!-- FOUR BUTTONS -->
         <div class="modal fade" id="sessionModalDetail" tabindex="-1" role="dialog" aria-labelledby="sessionModalDetailLabel" aria-hidden="true">
           <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -370,6 +379,7 @@
     export default {
         data(){
           return{
+            renderComponent: true,
             timeLimit: 0,
             timePassed: 0,
             timePassed: 0,
@@ -410,6 +420,14 @@
           }
         },
         methods:{
+          forceRerender(){
+            // this.renderComponent = false;
+            // this.$nextTick().then(() => {
+            //   this.renderComponent = true;
+            // });
+            this.$forceUpdate();
+            // this.loadSession();
+          },  
           getResults(page = 1) {
             let query = this.search;
             axios.get('api/findsession?q='+query+'&page=' + page)

@@ -31,6 +31,60 @@ scratch. This page gets rid of all links and provides the needed markup only.
         <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
       </li>
     </ul>
+    <ul class="navbar-nav ml-auto">
+      <!-- Notifications Dropdown Menu -->
+      <li class="dropdown btn-group dropleft">
+        <button class="btn dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <span class="material-icons">settings</span>
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+          <a href="#">
+            <button class="dropdown-item" type="button">
+              <div class="row">
+                <i class="material-icons blue mr-1">create</i>
+                Edit
+              </div>
+            </button>
+          </a>
+          <a href="#">
+            <button class="dropdown-item" type="button">
+              <div class="row">
+                <i class="material-icons red mr-1">delete</i>
+                Delete
+              </div>
+            </button>
+          </a>
+          <div class="dropdown-divider"></div>
+
+          <a href="#">
+            <button class="dropdown-item" type="button">
+              <div class="row">
+                <i class="material-icons mr-1 green">add</i>
+                Create New..
+              </div>
+            </button>
+          </a>
+          <div class="dropdown-divider"></div>
+
+          <a href="#">
+            <button class="dropdown-item">
+              <div class="row">
+                <i class="material-icons mr-1 green">toggle_on</i>
+                Enable Meeting
+              </div>
+            </button>
+          </a>
+          <a href="#">
+            <button class="dropdown-item" type="button">
+              <div class="row">
+                <i class="material-icons mr-1 blue">link</i>
+                Change Meeting URL
+              </div>
+            </button>
+          </a>
+        </div>
+      </li>
+    </ul>
 
   </nav>
   <!-- /.navbar -->
@@ -197,6 +251,17 @@ scratch. This page gets rid of all links and provides the needed markup only.
               <p>
                 Lectures
               </p>
+            </router-link>
+          </li>
+
+          <li class="nav-item has-treeview">
+            <router-link to="/announcement" class="nav-link">
+              <div class="row pl-3">
+                <i class="material-icons red">campaign</i>
+                <p>
+                  Announcements
+                </p>
+              </div>
             </router-link>
           </li>
 

@@ -88,6 +88,7 @@ let routes = [
   { path: '/submissions', component: require('./components/Submissions.vue').default },
   { path: '/lectures', component: require('./components/Lectures.vue').default},
   { path: '/lectureIndex', component: require('./components/LectureIndex.vue').default, name: 'lectureIndex'},
+  { path: '/announcement', component: require('./components/Announcements.vue').default},
 ]
 
 const router = new VueRouter({
