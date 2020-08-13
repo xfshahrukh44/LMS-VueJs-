@@ -25,67 +25,39 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
   <!-- Navbar -->
   <nav class="main-header navbar navbar-expand navbar-white navbar-light">
-     <!-- Left navbar links -->
-    <ul class="navbar-nav">
-      <li class="nav-item">
-        <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
-      </li>
-    </ul>
+    
+    
+
+    
+    
+
+    <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
-      <!-- Notifications Dropdown Menu -->
-      <li class="dropdown btn-group dropleft">
-        <button class="btn dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <span class="material-icons">settings</span>
-        </button>
-        <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
-          <a href="#">
-            <button class="dropdown-item" type="button">
-              <div class="row">
-                <i class="material-icons blue mr-1">create</i>
-                Edit
-              </div>
-            </button>
-          </a>
-          <a href="#">
-            <button class="dropdown-item" type="button">
-              <div class="row">
-                <i class="material-icons red mr-1">delete</i>
-                Delete
-              </div>
-            </button>
+      
+      
+      
+      <li class="nav-item dropdown">
+        <notification></notification>
+        <!-- <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right" style="left: inherit; right: 0px; width:290px;">
+          <a href="#" class="dropdown-item" id="announcement_count">
+            <i class="fas fa-bullhorn mr-2"></i> No new annouoncements
           </a>
           <div class="dropdown-divider"></div>
-
-          <a href="#">
-            <button class="dropdown-item" type="button">
-              <div class="row">
-                <i class="material-icons mr-1 green">add</i>
-                Create New..
-              </div>
-            </button>
+          <a href="#" class="dropdown-item">
+            <i class="fas fa-users mr-2"></i> 8 friend requests
+            <span class="float-right text-muted text-sm">12 hours</span>
           </a>
           <div class="dropdown-divider"></div>
-
-          <a href="#">
-            <button class="dropdown-item">
-              <div class="row">
-                <i class="material-icons mr-1 green">toggle_on</i>
-                Enable Meeting
-              </div>
-            </button>
+          <a href="#" class="dropdown-item">
+            <i class="fas fa-file mr-2"></i> 3 new reports
+            <span class="float-right text-muted text-sm">2 days</span>
           </a>
-          <a href="#">
-            <button class="dropdown-item" type="button">
-              <div class="row">
-                <i class="material-icons mr-1 blue">link</i>
-                Change Meeting URL
-              </div>
-            </button>
-          </a>
-        </div>
+          <div class="dropdown-divider"></div>
+          <a href="#" class="dropdown-item dropdown-footer">See All Notifications</a>
+        </div> -->
       </li>
+      
     </ul>
-
   </nav>
   <!-- /.navbar -->
 
@@ -366,6 +338,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <!-- REQUIRED SCRIPTS -->
 
 <script src="/js/app.js"></script>
+
 <script type="text/javascript">
 var user_id = <?php echo auth()->user()->id; ?>;
 
@@ -427,10 +400,26 @@ $('#check-out').on('click',function () {
       url : '{{URL::to("api/checkOutURL")}}',
       data:{"user_id":user_id},
       dataType: "JSON",
-        success:function(data){}
+      success:function(data){}
     });
   $('#attendance_recorded').show();                           
-});            
+});
+// $(document).ready(
+//     function notifications(){
+//     setInterval(function(){
+//       $.ajax({
+//         type: 'get',
+//         url: '{{URL::to("api/notifications")}}',
+//         dataType: "JSON",
+//         success: function(data){
+//           $('#main_count').text(data.main_count);
+//           $('#announcement_count').text(data.announcement_count + ' new announcements');
+//         }
+//       })
+//     }, 2000);
+//   }
+// )
+
 
 </script>
 

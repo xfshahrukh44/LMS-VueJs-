@@ -23,6 +23,7 @@ Vue.component('question',require('./components/Question.vue').default)
 Vue.component('opt',require('./components/Option.vue').default)
 Vue.component('assign',require('./components/Assignments.vue').default)
 Vue.component('lecture',require('./components/Lectures.vue').default)
+Vue.component('notification',require('./components/Notifications.vue').default)
 
 window.Swal = Swal;
 const Toast = Swal.mixin({

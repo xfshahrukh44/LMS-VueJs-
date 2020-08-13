@@ -12,8 +12,10 @@ use App\Models\Section;
 use App\Models\Student;
 use App\Models\Teacher;
 use App\Models\Submission;
+use App\User;
 use DB;
 use Carbon\Carbon;
+use App\Notifications\AssignmentNotification;
 
 class AssignmentController extends Controller
 {
@@ -87,9 +89,6 @@ class AssignmentController extends Controller
                 'title' => 'required',
                 'marks' => 'required',
             ]);
-            // $type = $_FILES['file']['type'];
-            // $data = file_get_contents($_FILES['file']['tmp_name']);
-
             //Purging Files Code Start//
             $assignment = Assignment::all();
             if(count($assignment) > 100){
@@ -110,7 +109,7 @@ class AssignmentController extends Controller
             $file_name = explode('.',$request->file_name);
 
             Storage::disk('public')->put(Carbon::today().' - '.auth('api')->user()->name.' - '.$session->course->title.' - '.$file_name[0].'.'.$file_type[0],base64_decode($file_data[1]));
-            DB::table('assignments')->insert([
+            $assignment = Assignment::create([
                 'session_id' => $request->session_id,
                 'title' => $request->title,
                 'description' => $request->description,
@@ -118,10 +117,22 @@ class AssignmentController extends Controller
                 'type' => $file_MIME_TYPE[0],
                 'file' => '/storage/'.Carbon::today().' - '.auth('api')->user()->name.' - '.$session->course->title.' - '.$file_name[0].'.'.$file_type[0],
             ]);
+
+            // Get students to be notified
+            $session = Session::find($request->session_id);
+            $students = Student::where('section_id', $session->section->id)->get();
+            //notify the students
+            foreach($students as $student)
+            {
+                $student->user->notify(new AssignmentNotification($assignment));
+            }
         }
         else
         {
-            return redirect()->route('api/session');
+            return [
+                'success' => false,
+                message => 'Not allowed'
+            ];
         }
     }
 

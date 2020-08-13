@@ -72,3 +72,7 @@ Route::get('adminhome','API\AdminController@view_dashboard');
 Route::get('statusURL','API\AttendanceController@find_check_in_out_status');
 Route::get('checkInURL', 'API\AttendanceController@check_in');
 Route::get('checkOutURL', 'API\AttendanceController@check_out');
+
+// NOTIFICATIONS
+Route::get('notifications', 'API\AnnouncementController@notifications');
+Route::get('mark_all_read', 'API\AnnouncementController@mark_all_read');

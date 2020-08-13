@@ -2,7 +2,7 @@
     <div class="container">
         <div class="row mt-3 ml-1 mb-2">
             <h2 class="pr-2">Announcements</h2>
-            <button class="btn btn-success xs" id="add_announcement" @click="AddAnnouncementModal" v-if="$gate.isAdmin() || $gate.isTeacher()">
+            <button class="btn btn-success xs" id="add_announcement" @click="AddAnnouncementModal" v-if="$gate.isAdmin()">
                 <i class="fas fa-plus fa-lg"></i>
             </button>
             
@@ -14,12 +14,13 @@
         <!-- INDEX VIEW -->
         <div class="row">
           <div class="card card-primary col-md-12 ml-3" v-for="announcement in announcements">
+            <div class="card-header">
               <div class="dropdown" style="text-align:right;">
-                <button class="btn dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <button class="btn dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-if="$gate.isAdmin() || announcement.user_id == form.user_id">
                   <span class="material-icons">settings</span>
                 </button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
-                  <a href="#" @click="EditAnnouncementModal(announcement)" v-if="$gate.isAdmin() || announcement.id == form.user_id">
+                  <a href="#" @click="EditAnnouncementModal(announcement)" v-if="announcement.user_id == form.user_id">
                     <button class="dropdown-item" type="button">
                       <div class="row">
                         <i class="material-icons blue mr-1">create</i>
@@ -27,7 +28,7 @@
                       </div>
                     </button>
                   </a>
-                  <a href="#" @click="deleteAnnouncement(announcement.id)" v-if="$gate.isAdmin()">
+                  <a href="#" @click="deleteAnnouncement(announcement.id)">
                     <button class="dropdown-item" type="button">
                       <div class="row">
                         <i class="material-icons red mr-1">delete</i>
@@ -36,25 +37,14 @@
                     </button>
                   </a>
                   <div class="dropdown-divider" v-if="$gate.isAdmin()"></div>
-
-                  <a href="#" @click="DetailAnnouncementModal(announcement)" v-if="$gate.isAdmin() || $gate.isTeacher()">
-                    <button class="dropdown-item" type="button">
-                      <div class="row">
-                        <i class="material-icons mr-1 green">add</i>
-                        Create New..
-                      </div>
-                    </button>
-                  </a>
-                  <div class="dropdown-divider" v-if="$gate.isAdmin() || $gate.isTeacher()"></div>
                 </div>
               </div>
-            <!-- <div class="card-header" v-if="$gate.isAdmin() || $gate.isTeacher()">
-              
-            </div> -->
+            </div>
             <div class="card-body box-profile">
               <h1 class="profile-username text-center">{{announcement.title}}</h1>
               <!-- //children -->   
               <p><h5>{{announcement.content}}</h5></p>
+              <p><h5 style="text-align: right!important;">{{'-' + announcement.user.name + ' | ' + announcement.user.type.toUpperCase()}}</h5></p>
             </div>
             <!-- Buttons -->
             <!-- /.card-body -->

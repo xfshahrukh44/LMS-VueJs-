@@ -171,6 +171,7 @@
                     <option value="">Set State</option>
                     <option value="enable">enable</option>
                     <option value="disable">disable</option>
+                    <!-- <option v-for="options in session"></option> -->
                   </select>
                 </div>
               </div>

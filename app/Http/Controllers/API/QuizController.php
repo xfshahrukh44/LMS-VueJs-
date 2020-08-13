@@ -5,6 +5,9 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Quiz;
+use App\Models\Session;
+use App\Models\Student;
+use App\Notifications\QuizNotification;
 
 class QuizController extends Controller
 {
@@ -36,6 +39,15 @@ class QuizController extends Controller
 
         ]);
         $quiz = Quiz::create($request->all());
+
+        // Get students to be notified
+        $session = Session::find($request->session_id);
+        $students = Student::where('section_id', $session->section->id)->get();
+        //notify the students
+        foreach($students as $student)
+        {
+            $student->user->notify(new QuizNotification($quiz));
+        }
         return $quiz->id;
     }
 
