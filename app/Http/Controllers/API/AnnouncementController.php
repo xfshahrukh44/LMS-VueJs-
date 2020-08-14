@@ -161,13 +161,20 @@ class AnnouncementController extends Controller
                                 ->where('read_at', NULL)
                                 ->get());
 
-            $main_count += $announcement_count + $assignment_count + $quiz_count;
+            $lecture_count = count(DB::table('notifications')
+                                ->where('type', 'App\Notifications\LectureNotification')
+                                ->where('notifiable_id', $user->id)
+                                ->where('read_at', NULL)
+                                ->get());
+
+            $main_count += $announcement_count + $assignment_count + $quiz_count + $lecture_count;
 
             return [
                 'main_count' => $main_count,
                 'announcement_count' => $announcement_count,
                 'assignment_count' => $assignment_count,
                 'quiz_count' => $quiz_count,
+                'lecture_count' => $lecture_count,
             ];
         }
 

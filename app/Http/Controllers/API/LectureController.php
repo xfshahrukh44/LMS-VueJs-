@@ -7,8 +7,10 @@ use Illuminate\Http\Request;
 use App\Models\Lecture;
 use App\Models\Teacher;
 use App\Models\Student;
+use App\Models\Session;
 use Illuminate\Support\Facades\Gate;
 use DB;
+use App\Notifications\LectureNotification;
 
 class LectureController extends Controller
 {
@@ -75,11 +77,22 @@ class LectureController extends Controller
             ]);
             $str = $request->url;
             $url = 'https://www.youtube.com/embed/'.substr($str, (strlen($str)) - 11);
-            return Lecture::create([
+            $lecture = Lecture::create([
                 'session_id' => $request->session_id,
                 'title' => $request->title,
                 'url' => $url,
             ]);
+
+            // Get students to be notified
+            $session = Session::find($request->session_id);
+            $students = Student::where('section_id', $session->section->id)->get();
+            //notify the students
+            foreach($students as $student)
+            {
+                $student->user->notify(new LectureNotification($lecture));
+            }
+
+            return $lecture;
         }
         // else
         // {

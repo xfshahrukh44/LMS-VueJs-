@@ -36,11 +36,19 @@
                 <span class="ml-1 mb-1" id="quiz_count"></span>
             </div>
           </router-link>
+          <!-- Lectures -->
+          <router-link to="/lectures" class="dropdown-item" v-if="lecture_count > 0">
+            <div class="row">
+                <i class="material-icons ml-2">menu_book</i>
+                <span class="ml-1 mb-1" id="lecture_count"></span>
+            </div>
+          </router-link>
           <!-- Mark all as read -->
+          <div class="dropdown-divider"></div>
           <a href="#" class="dropdown-item dropdown-footer" @click="mark_all_read">
             <div class="row">
-                <i class="material-icons ml-2 green">done_all</i>
-                <span class="ml-1 mb-1">Mark all as read</span>
+                <i class="material-icons ml-2 mt-2 green">done_all</i>
+                <span class="ml-1 mb-1 mt-2">Mark all as read</span>
             </div>
           </a>
         </div>
@@ -55,6 +63,7 @@
                 announcement_count: 0,
                 assignment_count: 0,
                 quiz_count: 0,
+                lecture_count: 0,
             }
         },
         methods:{
@@ -65,6 +74,7 @@
                     this.announcement_count = data.announcement_count;
                     this.assignment_count = data.assignment_count;
                     this.quiz_count = data.quiz_count;
+                    this.lecture_count = data.lecture_count;
                     if(data.main_count == 0)
                     {
                         $('#main_count').hide();
@@ -79,6 +89,7 @@
                     $('#announcement_count').text(this.announcement_count + ' new announcement(s)');
                     $('#assignment_count').text(this.assignment_count + ' new assignment(s)');
                     $('#quiz_count').text(this.quiz_count + ' new quiz(zes)');
+                    $('#lecture_count').text(this.lecture_count + ' new lecture(s)');
                 });
             },
             mark_all_read(){

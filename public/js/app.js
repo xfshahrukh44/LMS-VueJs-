@@ -3644,13 +3644,22 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
       main_count: 0,
       announcement_count: 0,
       assignment_count: 0,
-      quiz_count: 0
+      quiz_count: 0,
+      lecture_count: 0
     };
   },
   methods: {
@@ -3663,6 +3672,7 @@ __webpack_require__.r(__webpack_exports__);
         _this.announcement_count = data.announcement_count;
         _this.assignment_count = data.assignment_count;
         _this.quiz_count = data.quiz_count;
+        _this.lecture_count = data.lecture_count;
 
         if (data.main_count == 0) {
           $('#main_count').hide();
@@ -3674,6 +3684,7 @@ __webpack_require__.r(__webpack_exports__);
         $('#announcement_count').text(_this.announcement_count + ' new announcement(s)');
         $('#assignment_count').text(_this.assignment_count + ' new assignment(s)');
         $('#quiz_count').text(_this.quiz_count + ' new quiz(zes)');
+        $('#lecture_count').text(_this.lecture_count + ' new lecture(s)');
       });
     },
     mark_all_read: function mark_all_read() {
@@ -100528,6 +100539,27 @@ var render = function() {
                 )
               : _vm._e(),
             _vm._v(" "),
+            _vm.lecture_count > 0
+              ? _c(
+                  "router-link",
+                  { staticClass: "dropdown-item", attrs: { to: "/lectures" } },
+                  [
+                    _c("div", { staticClass: "row" }, [
+                      _c("i", { staticClass: "material-icons ml-2" }, [
+                        _vm._v("menu_book")
+                      ]),
+                      _vm._v(" "),
+                      _c("span", {
+                        staticClass: "ml-1 mb-1",
+                        attrs: { id: "lecture_count" }
+                      })
+                    ])
+                  ]
+                )
+              : _vm._e(),
+            _vm._v(" "),
+            _c("div", { staticClass: "dropdown-divider" }),
+            _vm._v(" "),
             _c(
               "a",
               {
@@ -100594,11 +100626,13 @@ var staticRenderFns = [
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "row" }, [
-      _c("i", { staticClass: "material-icons ml-2 green" }, [
+      _c("i", { staticClass: "material-icons ml-2 mt-2 green" }, [
         _vm._v("done_all")
       ]),
       _vm._v(" "),
-      _c("span", { staticClass: "ml-1 mb-1" }, [_vm._v("Mark all as read")])
+      _c("span", { staticClass: "ml-1 mb-1 mt-2" }, [
+        _vm._v("Mark all as read")
+      ])
     ])
   }
 ]
